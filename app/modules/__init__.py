@@ -6,8 +6,8 @@
 from flask import Blueprint
 
 
-# note  : /rest/api 由nginx代理，后端不需要处理
-restapi = Blueprint('restapi', __name__)
+# note  : /restapi 由nginx代理，后端不需要处理
+restapi = Blueprint('restapi', __name__, url_prefix='/restapi')
 
 
 # 加载子路由

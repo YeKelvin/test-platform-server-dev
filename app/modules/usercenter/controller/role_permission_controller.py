@@ -12,8 +12,8 @@ from app.tools.require import require_permission
 
 @blueprint.get('/role/permissions')
 @require_login
-@require_permission('QUERY_ROLE')
-def query_role_permissions():
+@require_permission
+def query_role_permissions(CODE='QUERY_ROLE'):
     """查询角色全部权限"""
     req = JsonParser(
         Argument('roleNo', required=True, nullable=False, help='角色编号不能为空')
@@ -23,8 +23,8 @@ def query_role_permissions():
 
 @blueprint.post('/role/permissions')
 @require_login
-@require_permission('MODIFY_ROLE')
-def set_role_permissions():
+@require_permission
+def set_role_permissions(CODE='MODIFY_ROLE'):
     """设置角色权限"""
     req = JsonParser(
         Argument('roleNo', required=True, nullable=False, help='角色编号不能为空'),

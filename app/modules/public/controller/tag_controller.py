@@ -12,8 +12,8 @@ from app.tools.require import require_permission
 
 @blueprint.get('/tag/list')
 @require_login
-@require_permission('QUERY_TAG')
-def query_tag_list():
+@require_permission
+def query_tag_list(CODE='QUERY_TAG'):
     """分页查询标签列表"""
     req = JsonParser(
         Argument('tagNo'),
@@ -27,16 +27,16 @@ def query_tag_list():
 
 @blueprint.get('/tag/all')
 @require_login
-@require_permission('QUERY_TAG')
-def query_tag_all():
+@require_permission
+def query_tag_all(CODE='QUERY_TAG'):
     """查询全部标签"""
     return service.query_tag_all()
 
 
 @blueprint.post('/tag')
 @require_login
-@require_permission('CREATE_TAG')
-def create_tag():
+@require_permission
+def create_tag(CODE='CREATE_TAG'):
     """新增标签"""
     req = JsonParser(
         Argument('tagName', required=True, nullable=False, help='标签名称不能为空'),
@@ -47,8 +47,8 @@ def create_tag():
 
 @blueprint.put('/tag')
 @require_login
-@require_permission('MODIFY_TAG')
-def modify_tag():
+@require_permission
+def modify_tag(CODE='MODIFY_TAG'):
     """修改标签"""
     req = JsonParser(
         Argument('tagNo', required=True, nullable=False, help='标签编号不能为空'),
@@ -60,8 +60,8 @@ def modify_tag():
 
 @blueprint.delete('/tag')
 @require_login
-@require_permission('REMOVE_TAG')
-def remove_tag():
+@require_permission
+def remove_tag(CODE='REMOVE_TAG'):
     """删除标签"""
     req = JsonParser(
         Argument('tagNo', required=True, nullable=False, help='标签编号不能为空'),

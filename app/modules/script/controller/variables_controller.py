@@ -13,8 +13,8 @@ from app.tools.require import require_permission
 
 @blueprint.get('/variable/dataset/list')
 @require_login
-@require_permission('QUERY_DATASET')
-def query_dataset_list():
+@require_permission
+def query_dataset_list(CODE='QUERY_DATASET'):
     """分页查询变量集列表"""
     req = JsonParser(
         Argument('workspaceNo'),
@@ -30,8 +30,8 @@ def query_dataset_list():
 
 @blueprint.get('/variable/dataset/all')
 @require_login
-@require_permission('QUERY_DATASET')
-def query_dataset_all():
+@require_permission
+def query_dataset_all(CODE='QUERY_DATASET'):
     """查询所有变量集"""
     req = JsonParser(
         Argument('workspaceNo'),
@@ -42,8 +42,8 @@ def query_dataset_all():
 
 @blueprint.post('/variable/dataset')
 @require_login
-@require_permission('CREATE_DATASET')
-def create_dataset():
+@require_permission
+def create_dataset(CODE='CREATE_DATASET'):
     """新增变量集"""
     req = JsonParser(
         Argument('workspaceNo'),
@@ -57,8 +57,8 @@ def create_dataset():
 
 @blueprint.put('/variable/dataset')
 @require_login
-@require_permission('MODIFY_DATASET')
-def modify_dataset():
+@require_permission
+def modify_dataset(CODE='MODIFY_DATASET'):
     """修改变量集"""
     req = JsonParser(
         Argument('datasetNo', required=True, nullable=False, help='变量集编号不能为空'),
@@ -71,8 +71,8 @@ def modify_dataset():
 
 @blueprint.delete('/variable/dataset')
 @require_login
-@require_permission('REMOVE_DATASET')
-def remove_dataset():
+@require_permission
+def remove_dataset(CODE='REMOVE_DATASET'):
     """删除变量集"""
     req = JsonParser(
         Argument('datasetNo', required=True, nullable=False, help='变量集编号不能为空')
@@ -82,8 +82,8 @@ def remove_dataset():
 
 @blueprint.post('/variable')
 @require_login
-@require_permission('CREATE_VARIABLE')
-def create_variable():
+@require_permission
+def create_variable(CODE='CREATE_VARIABLE'):
     """新增变量"""
     req = JsonParser(
         Argument('datasetNo', required=True, nullable=False, help='变量集编号不能为空'),
@@ -97,8 +97,8 @@ def create_variable():
 
 @blueprint.put('/variable')
 @require_login
-@require_permission('MODIFY_VARIABLE')
-def modify_variable():
+@require_permission
+def modify_variable(CODE='MODIFY_VARIABLE'):
     """修改变量"""
     req = JsonParser(
         Argument('variableNo', required=True, nullable=False, help='变量编号不能为空'),
@@ -112,8 +112,8 @@ def modify_variable():
 
 @blueprint.delete('/variable')
 @require_login
-@require_permission('REMOVE_VARIABLE')
-def remove_variable():
+@require_permission
+def remove_variable(CODE='REMOVE_VARIABLE'):
     """删除变量"""
     req = JsonParser(
         Argument('variableNo', required=True, nullable=False, help='变量编号不能为空')
@@ -123,8 +123,8 @@ def remove_variable():
 
 @blueprint.put('/variable/enable')
 @require_login
-@require_permission('MODIFY_VARIABLE')
-def enable_variable():
+@require_permission
+def enable_variable(CODE='MODIFY_VARIABLE'):
     """启用变量"""
     req = JsonParser(
         Argument('variableNo', required=True, nullable=False, help='变量编号不能为空')
@@ -134,8 +134,8 @@ def enable_variable():
 
 @blueprint.put('/variable/disable')
 @require_login
-@require_permission('MODIFY_VARIABLE')
-def disable_variable():
+@require_permission
+def disable_variable(CODE='MODIFY_VARIABLE'):
     """禁用变量"""
     req = JsonParser(
         Argument('variableNo', required=True, nullable=False, help='变量编号不能为空')
@@ -145,8 +145,8 @@ def disable_variable():
 
 @blueprint.put('/variable/current/value')
 @require_login
-@require_permission('MODIFY_VARIABLE')
-def update_current_value():
+@require_permission
+def update_current_value(CODE='MODIFY_VARIABLE'):
     """更新变量当前值"""
     req = JsonParser(
         Argument('variableNo', required=True, nullable=False, help='变量编号不能为空'),
@@ -155,10 +155,10 @@ def update_current_value():
     return service.update_current_value(req)
 
 
-@blueprint.get('/variables/by/dataset')
+@blueprint.get('/variables/by-dataset')
 @require_login
-@require_permission('QUERY_VARIABLE')
-def query_variables_by_dataset():
+@require_permission
+def query_variables_by_dataset(CODE='QUERY_VARIABLE'):
     """根据集合查询全部变量"""
     req = JsonParser(
         Argument('datasetNo', required=True, nullable=False, help='变量集编号不能为空')
@@ -168,8 +168,8 @@ def query_variables_by_dataset():
 
 @blueprint.get('/variables')
 @require_login
-@require_permission('QUERY_VARIABLE')
-def query_variables():
+@require_permission
+def query_variables(CODE='QUERY_VARIABLE'):
     """根据列表批量查询变量"""
     req = JsonParser(
         Argument('datasets', required=True, nullable=False, help='变量集编号不能为空')
@@ -179,8 +179,8 @@ def query_variables():
 
 @blueprint.post('/variables')
 @require_login
-@require_permission('CREATE_VARIABLE')
-def create_variables():
+@require_permission
+def create_variables(CODE='CREATE_VARIABLE'):
     """根据列表批量新增变量"""
     """
     Example:
@@ -206,8 +206,8 @@ def create_variables():
 
 @blueprint.put('/variables')
 @require_login
-@require_permission('MODIFY_VARIABLE')
-def modify_variables():
+@require_permission
+def modify_variables(CODE='MODIFY_VARIABLE'):
     """根据列表批量修改变量"""
     """
     Example:
@@ -234,8 +234,8 @@ def modify_variables():
 
 @blueprint.delete('/variables')
 @require_login
-@require_permission('REMOVE_VARIABLE')
-def remove_variables():
+@require_permission
+def remove_variables(CODE='REMOVE_VARIABLE'):
     """批量删除变量"""
     req = JsonParser(
         Argument('datasetNo', required=True, nullable=False, help='变量集编号不能为空'),
@@ -246,8 +246,8 @@ def remove_variables():
 
 @blueprint.post('/variable/dataset/duplicate')
 @require_login
-@require_permission('COPY_DATASET')
-def duplicate_dataset():
+@require_permission
+def duplicate_dataset(CODE='COPY_DATASET'):
     """复制变量集"""
     req = JsonParser(
         Argument('datasetNo', required=True, nullable=False, help='变量集编号不能为空')
@@ -257,8 +257,8 @@ def duplicate_dataset():
 
 @blueprint.post('/variable/dataset/copy/to/workspace')
 @require_login
-@require_permission('COPY_DATASET')
-def copy_dataset_to_workspace():
+@require_permission
+def copy_dataset_to_workspace(CODE='COPY_DATASET'):
     """复制变量集到指定工作空间"""
     req = JsonParser(
         Argument('workspaceNo', required=True, nullable=False, help='空间编号不能为空'),
@@ -269,8 +269,8 @@ def copy_dataset_to_workspace():
 
 @blueprint.post('/variable/dataset/move/to/workspace')
 @require_login
-@require_permission('MOVE_DATASET')
-def move_dataset_to_workspace():
+@require_permission
+def move_dataset_to_workspace(CODE='MOVE_DATASET'):
     """移动变量集到指定工作空间"""
     req = JsonParser(
         Argument('workspaceNo', required=True, nullable=False, help='空间编号不能为空'),

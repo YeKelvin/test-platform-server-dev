@@ -14,8 +14,8 @@ from app.tools.require import require_permission
 
 @blueprint.get('/notice/robot/list')
 @require_login
-@require_permission('QUERY_ROBOT')
-def query_notice_robot_list():
+@require_permission
+def query_notice_robot_list(CODE='QUERY_ROBOT'):
     """分页查询通知机器人列表"""
     req = JsonParser(
         Argument('workspaceNo'),
@@ -32,8 +32,8 @@ def query_notice_robot_list():
 
 @blueprint.get('/notice/robot/all')
 @require_login
-@require_permission('QUERY_ROBOT')
-def query_notice_robot_all():
+@require_permission
+def query_notice_robot_all(CODE='QUERY_ROBOT'):
     """查询全部通知机器人"""
     req = JsonParser(
         Argument('workspaceNo')
@@ -43,8 +43,8 @@ def query_notice_robot_all():
 
 @blueprint.get('/notice/robot')
 @require_login
-@require_permission('QUERY_ROBOT')
-def query_notice_robot():
+@require_permission
+def query_notice_robot(CODE='QUERY_ROBOT'):
     """查询通知机器人"""
     req = JsonParser(
         Argument('robotNo', required=True, nullable=False, help='机器人编号不能为空')
@@ -54,8 +54,8 @@ def query_notice_robot():
 
 @blueprint.post('/notice/robot')
 @require_login
-@require_permission('CREATE_ROBOT')
-def create_notice_robot():
+@require_permission
+def create_notice_robot(CODE='CREATE_ROBOT'):
     """新增通知机器人"""
     req = JsonParser(
         Argument('workspaceNo', required=True, nullable=False, help='空间编号不能为空'),
@@ -69,8 +69,8 @@ def create_notice_robot():
 
 @blueprint.put('/notice/robot')
 @require_login
-@require_permission('MODIFY_ROBOT')
-def modify_notice_robot():
+@require_permission
+def modify_notice_robot(CODE='MODIFY_ROBOT'):
     """修改通知机器人"""
     req = JsonParser(
         Argument('robotNo', required=True, nullable=False, help='机器人编号不能为空'),
@@ -83,8 +83,8 @@ def modify_notice_robot():
 
 @blueprint.put('/notice/robot/state')
 @require_login
-@require_permission('MODIFY_ROBOT')
-def modify_notice_robot_state():
+@require_permission
+def modify_notice_robot_state(CODE='MODIFY_ROBOT'):
     """修改通知机器人状态"""
     req = JsonParser(
         Argument('robotNo', required=True, nullable=False, help='机器人编号不能为空'),
@@ -95,8 +95,8 @@ def modify_notice_robot_state():
 
 @blueprint.delete('/notice/robot')
 @require_login
-@require_permission('REMOVE_ROBOT')
-def remove_notice_robot():
+@require_permission
+def remove_notice_robot(CODE='REMOVE_ROBOT'):
     """删除通知机器人"""
     req = JsonParser(
         Argument('robotNo', required=True, nullable=False, help='机器人编号不能为空')

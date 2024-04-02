@@ -6,11 +6,11 @@ from app.openapi.scriptcenter.controller import blueprint
 from app.openapi.scriptcenter.service import execution_service as service
 from app.tools.parser import Argument
 from app.tools.parser import JsonParser
-from app.tools.require import require_thirdparty_access
+from app.tools.require import require_access_permission
 
 
 @blueprint.post('/testplan/execute')
-@require_thirdparty_access
+@require_access_permission
 def execute_testplan():
     """执行测试计划"""
     req = JsonParser(

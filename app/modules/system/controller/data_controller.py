@@ -12,8 +12,8 @@ from app.tools.require import require_permission
 
 @blueprint.get('/data/log')
 @require_login
-@require_permission('QUERY_LOG')
-def query_data_log():
+@require_permission
+def query_data_log(CODE='QUERY_LOG'):
     """查询数据日志"""
     req = JsonParser(
         Argument('logNo', required=True, nullable=False, help='日志编号不能为空')
@@ -23,8 +23,8 @@ def query_data_log():
 
 @blueprint.get('/data/trace')
 @require_login
-@require_permission('QUERY_LOG')
-def query_data_trace():
+@require_permission
+def query_data_trace(CODE='QUERY_LOG'):
     """查询数据变更详情"""
     req = JsonParser(
         Argument('rowid')
@@ -34,8 +34,8 @@ def query_data_trace():
 
 @blueprint.get('/data/log/list')
 @require_login
-@require_permission('QUERY_LOG')
-def query_data_log_list():
+@require_permission
+def query_data_log_list(CODE='QUERY_LOG'):
     """分页查询数据日志列表"""
     req = JsonParser(
         Argument('startTime'),

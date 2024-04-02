@@ -6,8 +6,8 @@ from app.modules.public.dao import tag_dao
 from app.modules.public.model import TTag
 from app.tools.identity import new_id
 from app.tools.service import http_service
+from app.tools.validator import check_absent
 from app.tools.validator import check_exists
-from app.tools.validator import check_not_exists
 from app.utils.sqlalchemy_util import QueryCondition
 
 
@@ -52,7 +52,7 @@ def query_tag_all():
 @http_service
 def create_tag(req):
     tag = tag_dao.select_by_name(req.tagName)
-    check_not_exists(tag, error='标签已存在')
+    check_absent(tag, error='标签已存在')
 
     TTag.insert(
         WORKSPACE_NO=new_id(),

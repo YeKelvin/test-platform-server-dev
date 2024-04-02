@@ -14,8 +14,8 @@ from app.tools.require import require_permission
 
 @blueprint.get('/testplan/list')
 @require_login
-@require_permission('QUERY_TESTPLAN')
-def query_testplan_list():
+@require_permission
+def query_testplan_list(CODE='QUERY_TESTPLAN'):
     """分页查询测试计划列表"""
     req = JsonParser(
         Argument('workspaceNo', required=True, nullable=False, help='工作空间不能为空'),
@@ -33,8 +33,8 @@ def query_testplan_list():
 
 @blueprint.get('/testplan/all')
 @require_login
-@require_permission('QUERY_TESTPLAN')
-def query_testplan_all():
+@require_permission
+def query_testplan_all(CODE='QUERY_TESTPLAN'):
     """查询全部测试计划"""
     req = JsonParser(
         Argument('workspaceNo', required=True, nullable=False, help='工作空间不能为空'),
@@ -45,8 +45,8 @@ def query_testplan_all():
 
 @blueprint.get('/testplan')
 @require_login
-@require_permission('QUERY_TESTPLAN')
-def query_testplan():
+@require_permission
+def query_testplan(CODE='QUERY_TESTPLAN'):
     """查询测试计划详情"""
     req = JsonParser(Argument('planNo', required=True, nullable=False, help='计划编号不能为空')).parse()
     return service.query_testplan(req)
@@ -54,8 +54,8 @@ def query_testplan():
 
 @blueprint.post('/testplan')
 @require_login
-@require_permission('CREATE_TESTPLAN')
-def create_testplan():
+@require_permission
+def create_testplan(CODE='CREATE_TESTPLAN'):
     """新增测试计划"""
     req = JsonParser(
         Argument('workspaceNo', required=True, nullable=False, help='空间编号不能为空'),
@@ -77,8 +77,8 @@ def create_testplan():
 
 @blueprint.put('/testplan')
 @require_login
-@require_permission('MODIFY_TESTPLAN')
-def modify_testplan():
+@require_permission
+def modify_testplan(CODE='MODIFY_TESTPLAN'):
     """修改测试计划"""
     req = JsonParser(
         Argument('planNo', required=True, nullable=False, help='计划编号不能为空'),
@@ -100,8 +100,8 @@ def modify_testplan():
 
 @blueprint.put('/testplan/state')
 @require_login
-@require_permission('MODIFY_TESTPLAN')
-def modify_testplan_state():
+@require_permission
+def modify_testplan_state(CODE='MODIFY_TESTPLAN'):
     """修改测试计划状态"""
     req = JsonParser(
         Argument('planNo', required=True, nullable=False, help='计划编号不能为空'),
@@ -112,8 +112,8 @@ def modify_testplan_state():
 
 @blueprint.put('/testplan/testphase')
 @require_login
-@require_permission('MODIFY_TESTPLAN')
-def modify_testplan_testphase():
+@require_permission
+def modify_testplan_testphase(CODE='MODIFY_TESTPLAN'):
     """修改测试计划测试阶段"""
     req = JsonParser(
         Argument('planNo', required=True, nullable=False, help='计划编号不能为空'),
@@ -124,8 +124,8 @@ def modify_testplan_testphase():
 
 @blueprint.get('/testplan/execution/all')
 @require_login
-@require_permission('QUERY_TESTPLAN_EXECUTION')
-def query_testplan_execution_all():
+@require_permission
+def query_testplan_execution_all(CODE='QUERY_TESTPLAN_EXECUTION'):
     """查询全部执行记录"""
     req = JsonParser(Argument('planNo', required=True, nullable=False, help='计划编号不能为空')).parse()
     return service.query_testplan_execution_all(req)
@@ -133,8 +133,8 @@ def query_testplan_execution_all():
 
 @blueprint.get('/testplan/execution/details')
 @require_login
-@require_permission('QUERY_TESTPLAN_EXECUTION')
-def query_testplan_execution_details():
+@require_permission
+def query_testplan_execution_details(CODE='QUERY_TESTPLAN_EXECUTION'):
     """查询执行记录详情"""
     req = JsonParser(Argument('executionNo', required=True, nullable=False, help='执行编号不能为空')).parse()
     return service.query_testplan_execution_details(req)

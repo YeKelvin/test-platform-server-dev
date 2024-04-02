@@ -6,7 +6,7 @@
 from flask import Blueprint
 
 
-api = Blueprint('openapi', __name__, url_prefix='/open/api')
+api = Blueprint('openapi', __name__, url_prefix='/openapi')
 
 
 # 加载子路由

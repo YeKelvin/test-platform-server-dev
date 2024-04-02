@@ -22,7 +22,7 @@ def login():
     return service.login(req)
 
 
-@blueprint.post('/user/login/by/enterprise')
+@blueprint.post('/user/login/by-enterprise')
 def login_by_enterprise():
     """企业登录"""
     req = JsonParser(
@@ -49,8 +49,8 @@ def query_user_info():
 
 @blueprint.get('/user/list')
 @require_login
-@require_permission('QUERY_USER')
-def query_user_list():
+@require_permission
+def query_user_list(CODE='QUERY_USER'):
     """分页查询用户列表"""
     req = JsonParser(
         Argument('userNo'),
@@ -67,16 +67,16 @@ def query_user_list():
 
 @blueprint.get('/user/all')
 @require_login
-@require_permission('QUERY_USER')
-def query_user_all():
+@require_permission
+def query_user_all(CODE='QUERY_USER'):
     """查询全部用户"""
     return service.query_user_all()
 
 
 @blueprint.post('/user')
 @require_login
-@require_permission('CREATE_USER')
-def create_user():
+@require_permission
+def create_user(CODE='CREATE_USER'):
     """用户注册"""
     req = JsonParser(
         Argument('loginName', required=True, nullable=False, help='登录账号不能为空'),
@@ -92,8 +92,8 @@ def create_user():
 
 @blueprint.put('/user')
 @require_login
-@require_permission('MODIFY_USER')
-def modify_user():
+@require_permission
+def modify_user(CODE='MODIFY_USER'):
     """更新用户信息"""
     req = JsonParser(
         Argument('userNo', required=True, nullable=False, help='用户编号不能为空'),
@@ -108,8 +108,8 @@ def modify_user():
 
 @blueprint.put('/user/state')
 @require_login
-@require_permission('MODIFY_USER')
-def modify_user_state():
+@require_permission
+def modify_user_state(CODE='MODIFY_USER'):
     """更新用户状态"""
     req = JsonParser(
         Argument('userNo', required=True, nullable=False, help='用户编号不能为空'),
@@ -154,8 +154,8 @@ def modify_user_password():
 
 @blueprint.put('/user/password/reset')
 @require_login
-@require_permission('RESET_PASSWORD')
-def reset_password():
+@require_permission
+def reset_password(CODE='RESET_PASSWORD'):
     """重置密码"""
     req = JsonParser(
         Argument('userNo', required=True, nullable=False, help='用户编号不能为空')
@@ -165,8 +165,8 @@ def reset_password():
 
 @blueprint.delete('/user')
 @require_login
-@require_permission('REMOVE_USER')
-def remove_user():
+@require_permission
+def remove_user(CODE='REMOVE_USER'):
     """删除用户"""
     req = JsonParser(
         Argument('userNo', required=True, nullable=False, help='用户编号不能为空')

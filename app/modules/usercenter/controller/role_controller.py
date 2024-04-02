@@ -13,8 +13,8 @@ from app.tools.require import require_permission
 
 @blueprint.get('/role/list')
 @require_login
-@require_permission('QUERY_ROLE')
-def query_role_list():
+@require_permission
+def query_role_list(CODE='QUERY_ROLE'):
     """分页查询角色列表"""
     req = JsonParser(
         Argument('roleNo'),
@@ -31,16 +31,16 @@ def query_role_list():
 
 @blueprint.get('/role/all')
 @require_login
-@require_permission('QUERY_ROLE')
-def query_role_all():
+@require_permission
+def query_role_all(CODE='QUERY_ROLE'):
     """查询全部角色"""
     return service.query_role_all()
 
 
 @blueprint.get('/role/info')
 @require_login
-@require_permission('QUERY_ROLE')
-def query_role_info():
+@require_permission
+def query_role_info(CODE='QUERY_ROLE'):
     """查询角色信息"""
     req = JsonParser(
         Argument('roleNo', required=True, nullable=False, help='角色编号不能为空')
@@ -50,8 +50,8 @@ def query_role_info():
 
 @blueprint.post('/role')
 @require_login
-@require_permission('CREATE_ROLE')
-def create_role():
+@require_permission
+def create_role(CODE='CREATE_ROLE'):
     """新增角色"""
     req = JsonParser(
         Argument('roleName', required=True, nullable=False, help='角色名称不能为空'),
@@ -64,8 +64,8 @@ def create_role():
 
 @blueprint.put('/role')
 @require_login
-@require_permission('MODIFY_ROLE')
-def modify_role():
+@require_permission
+def modify_role(CODE='MODIFY_ROLE'):
     """更新角色信息"""
     req = JsonParser(
         Argument('roleNo', required=True, nullable=False, help='角色编号不能为空'),
@@ -79,8 +79,8 @@ def modify_role():
 
 @blueprint.put('/role/state')
 @require_login
-@require_permission('MODIFY_ROLE')
-def modify_role_state():
+@require_permission
+def modify_role_state(CODE='MODIFY_ROLE'):
     """更新角色状态"""
     req = JsonParser(
         Argument('roleNo', required=True, nullable=False, help='角色编号不能为空'),
@@ -91,8 +91,8 @@ def modify_role_state():
 
 @blueprint.delete('/role')
 @require_login
-@require_permission('REMOVE_ROLE')
-def remove_role():
+@require_permission
+def remove_role(CODE='REMOVE_ROLE'):
     """删除角色"""
     req = JsonParser(
         Argument('roleNo', required=True, nullable=False, help='角色编号不能为空')

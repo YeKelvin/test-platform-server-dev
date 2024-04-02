@@ -167,7 +167,8 @@ def init_permission_object():
     # SCHEDULE
     TPermissionObject.norecord_insert(OBJECT_NO=new_id(), OBJECT_NAME='定时任务', OBJECT_CODE='JOB')
     # OPENCENTER
-    TPermissionObject.norecord_insert(OBJECT_NO=new_id(), OBJECT_NAME='第三方应用', OBJECT_CODE='THIRD_PARTY_APP')
+    TPermissionObject.norecord_insert(OBJECT_NO=new_id(), OBJECT_NAME='第三方应用', OBJECT_CODE='APPLICATION')
+    TPermissionObject.norecord_insert(OBJECT_NO=new_id(), OBJECT_NAME='访问令牌', OBJECT_CODE='ACCESS_TOKEN')
 
 
 @with_appcontext
@@ -238,7 +239,7 @@ def init_permission_item():
     create_permission('SCRIPT', 'ELEMENT', '设置空间组件', 'SET_WORKSPACE_COMPONENT', 'SET')
     # execution
     create_permission('SCRIPT', 'ELEMENT', '运行脚本', 'RUN_ELEMENT', 'EXECUTE')
-    create_permission('SCRIPT', 'ELEMENT', '查询脚本(JSON)', 'QUERY_SCRIPT_AS_JSON', 'QUERY')
+    create_permission('SCRIPT', 'ELEMENT', '查询脚本(JSON)', 'QUERY_SCRIPT', 'QUERY')
     # variables
     create_permission('SCRIPT', 'VARIABLE', '查询变量集', 'QUERY_DATASET', 'QUERY')
     create_permission('SCRIPT', 'VARIABLE', '新增变量集', 'CREATE_DATASET', 'CREATE')
@@ -259,6 +260,15 @@ def init_permission_item():
     create_permission('SCRIPT', 'TESTPLAN', '查询执行记录', 'QUERY_TESTPLAN_EXECUTION', 'QUERY')
     # testreport
     create_permission('SCRIPT', 'TESTREPORT', '查询测试报告', 'QUERY_TESTREPORT', 'QUERY')
+    # openapi
+    create_permission('OPENCENTER', 'APPLICATION', '查询应用', 'QUERY_APPLICATION', 'QUERY')
+    create_permission('OPENCENTER', 'APPLICATION', '新增应用', 'CREATE_APPLICATION', 'CREATE')
+    create_permission('OPENCENTER', 'APPLICATION', '修改应用', 'MODIFY_APPLICATION', 'MODIFY')
+    create_permission('OPENCENTER', 'APPLICATION', '删除应用', 'REMOVE_APPLICATION', 'REMOVE')
+    create_permission('OPENCENTER', 'ACCESS_TOKEN', '查询令牌', 'QUERY_ACCESS_TOKEN', 'QUERY')
+    create_permission('OPENCENTER', 'ACCESS_TOKEN', '新增令牌', 'CREATE_ACCESS_TOKEN', 'CREATE')
+    create_permission('OPENCENTER', 'ACCESS_TOKEN', '修改令牌', 'MODIFY_ACCESS_TOKEN', 'MODIFY')
+    create_permission('OPENCENTER', 'ACCESS_TOKEN', '删除令牌', 'REMOVE_ACCESS_TOKEN', 'REMOVE')
 
 
 @with_appcontext

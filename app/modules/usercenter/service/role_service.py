@@ -10,8 +10,8 @@ from app.modules.usercenter.model import TRole
 from app.tools.exceptions import ServiceError
 from app.tools.identity import new_id
 from app.tools.service import http_service
+from app.tools.validator import check_absent
 from app.tools.validator import check_exists
-from app.tools.validator import check_not_exists
 from app.utils.sqlalchemy_util import QueryCondition
 
 
@@ -145,7 +145,7 @@ def remove_role(req):
 
     # 查询用户角色列表
     user_role_list = user_role_dao.select_all_by_roleno(req.roleNo)
-    check_not_exists(user_role_list, error='角色与用户存在关联，请先解除关联')
+    check_absent(user_role_list, error='角色与用户存在关联，请先解除关联')
 
     # 删除角色权限
     role_permission_dao.delete_by_role(req.roleNo)

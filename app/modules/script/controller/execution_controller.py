@@ -12,8 +12,8 @@ from app.tools.require import require_permission
 
 @blueprint.post('/element/collection/run')
 @require_login
-@require_permission('RUN_ELEMENT')
-def run_collection():
+@require_permission
+def run_collection(CODE='RUN_ELEMENT'):
     """运行测试集合"""
     req = JsonParser(
         Argument('collectionNo', required=True, nullable=False, help='元素编号不能为空'),
@@ -28,8 +28,8 @@ def run_collection():
 
 @blueprint.post('/element/worker/run')
 @require_login
-@require_permission('RUN_ELEMENT')
-def run_worker():
+@require_permission
+def run_worker(CODE='RUN_ELEMENT'):
     """运行测试用例"""
     req = JsonParser(
         Argument('workerNo', required=True, nullable=False, help='元素编号不能为空'),
@@ -44,8 +44,8 @@ def run_worker():
 
 @blueprint.post('/element/worker/run-by-sampler')
 @require_login
-@require_permission('RUN_ELEMENT')
-def run_worker_by_sampler():
+@require_permission
+def run_worker_by_sampler(CODE='RUN_ELEMENT'):
     """根据请求编号运行测试用例"""
     req = JsonParser(
         Argument('samplerNo', required=True, nullable=False, help='元素编号不能为空'),
@@ -60,8 +60,8 @@ def run_worker_by_sampler():
 
 @blueprint.post('/element/sampler/run')
 @require_login
-@require_permission('RUN_ELEMENT')
-def run_sampler():
+@require_permission
+def run_sampler(CODE='RUN_ELEMENT'):
     """运行取样器"""
     req = JsonParser(
         Argument('samplerNo', required=True, nullable=False, help='元素编号不能为空'),
@@ -77,8 +77,8 @@ def run_sampler():
 
 @blueprint.post('/element/snippet/run')
 @require_login
-@require_permission('RUN_ELEMENT')
-def run_snippet():
+@require_permission
+def run_snippet(CODE='RUN_ELEMENT'):
     """运行片段集合"""
     req = JsonParser(
         Argument('snippetNo', required=True, nullable=False, help='元素编号不能为空'),
@@ -93,8 +93,8 @@ def run_snippet():
 
 @blueprint.post('/element/offline/run')
 @require_login
-@require_permission('RUN_ELEMENT')
-def run_offline():
+@require_permission
+def run_offline(CODE='RUN_ELEMENT'):
     """运行离线请求"""
     req = JsonParser(
         Argument('rootNo', required=True, nullable=False, help='根元素编号不能为空'),
@@ -112,8 +112,8 @@ def run_offline():
 
 @blueprint.post('/testplan/execute')
 @require_login
-@require_permission('RUN_TESTPLAN')
-def execute_testplan():
+@require_permission
+def execute_testplan(CODE='RUN_TESTPLAN'):
     """运行测试计划"""
     req = JsonParser(
         Argument('planNo', required=True, nullable=False, help='计划编号不能为空'),
@@ -125,8 +125,8 @@ def execute_testplan():
 
 @blueprint.post('/testplan/interrupt')
 @require_login
-@require_permission('INTERRUPT_TESTPLAN')
-def interrupt_testplan():
+@require_permission
+def interrupt_testplan(CODE='INTERRUPT_TESTPLAN'):
     """中断运行测试计划"""
     req = JsonParser(
         Argument('executionNo', required=True, nullable=False, help='执行编号不能为空')

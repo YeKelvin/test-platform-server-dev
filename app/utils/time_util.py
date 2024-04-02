@@ -21,9 +21,9 @@ def strftime(format: str = TIMEFMT) -> str:
     return datetime.now().strftime(format)
 
 
-def timestamp_now() -> float:
+def timestamp_now(digits=None) -> float:
     """获取时间戳（从UTC时间 1970年1月1日 0点 到现在的秒值）"""
-    return time.time()
+    return int(time.time() * digits) if digits else time.time()
 
 
 def timestamp_to_utc8_datetime(timestmp) -> datetime:
@@ -51,8 +51,13 @@ def timestamp_to_strftime(format: str = TIMEFMT, timestamp: float = 0):
     return time.strftime(format, time.localtime(timestamp))
 
 
+def strftime_to_timestamp(strftime: str, format: str = TIMEFMT, digits=1000):
+    """时间字符串转时间戳"""
+    return int(time.mktime(time.strptime(strftime, format)) * digits)
+
+
 def strftime_to_timestamp_as_ms(strftime: str, format: str = TIMEFMT):
-    """时间字符串转毫秒级时间戳
+    """时间字符串转毫秒级时间戳precision
 
     :param strftime:    时间字符串
     :param format:      时间格式

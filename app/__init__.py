@@ -2,6 +2,8 @@
 # @File    : __init__.py
 # @Time    : 2019/11/7 9:39
 # @Author  : Kelvin.Ye
+from inspect import unwrap
+
 import orjson
 
 from apscheduler.events import EVENT_ALL
@@ -13,6 +15,7 @@ from apscheduler.events import EVENT_JOB_MODIFIED
 from apscheduler.events import EVENT_JOB_REMOVED
 from apscheduler.events import EVENT_JOB_SUBMITTED
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+from flask import Blueprint
 from flask import Flask
 from flask.json.provider import JSONProvider
 
@@ -47,7 +50,8 @@ def create_app() -> Flask:
     register_hooks(app)
     register_shell_context(app)
     register_commands(app)
-    init_rule_map(app)
+    init_openapi(app)
+    init_api_doc(app)
     set_app(app)
     return app
 
@@ -182,9 +186,32 @@ def orjson_deserializer(val):
     return orjson.loads(val)
 
 
-def init_rule_map(app: Flask):
-    """缓存接口路径和注释，用于记录请求日志"""
-    from app.tools.cache import RULE_MAP
+def init_openapi(app: Flask):
+    """将RestAPI自动注册为OpenAPI"""
+    blueprint = Blueprint('autoapi', __name__, url_prefix='/openapi')
+    exclude_modules = ['opencenter', 'usercenter', 'system']
+    required_methods = {'GET', 'POST', 'PUT', 'DELETE'}
+    for api in app.url_map.iter_rules():
+        if not (api.methods & required_methods):
+            continue
+        if not api.endpoint.startswith('restapi.'):
+            continue
+        if any(module in api.endpoint for module in exclude_modules):
+            continue
+        func = unwrap(app.view_functions[api.endpoint])
+        endpoint = f'open__{func.__name__}'
+        blueprint.add_url_rule(
+            rule=api.rule,
+            methods=[*api.methods],
+            endpoint=endpoint,
+            view_func=func,
+        )
+    app.register_blueprint(blueprint)
+
+
+def init_api_doc(app: Flask):
+    """缓存接口路径和描述，用于记录请求日志"""
+    from app.tools.cache import API_DOC_STORAGER
 
     required_methods = ['GET', 'POST', 'PUT', 'DELETE']
     for api in app.url_map.iter_rules():
@@ -194,4 +221,4 @@ def init_rule_map(app: Flask):
                 method = m
         if not method:
             continue
-        RULE_MAP[f'{method} {api.rule}'] = app.view_functions[api.endpoint].__doc__
+        API_DOC_STORAGER[f'{method}://{api.rule}'] = app.view_functions[api.endpoint].__doc__

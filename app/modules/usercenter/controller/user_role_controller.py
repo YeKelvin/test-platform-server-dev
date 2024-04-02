@@ -12,8 +12,8 @@ from app.tools.require import require_permission
 
 @blueprint.get('/user/role/list')
 @require_login
-@require_permission('QUERY_USER')
-def query_user_role_list():
+@require_permission
+def query_user_role_list(CODE='QUERY_USER'):
     """分页查询用户角色列表"""
     req = JsonParser(
         Argument('userNo'),
@@ -29,8 +29,8 @@ def query_user_role_list():
 
 @blueprint.get('/user/role/all')
 @require_login
-@require_permission('QUERY_USER')
-def query_user_role_all():
+@require_permission
+def query_user_role_all(CODE='QUERY_USER'):
     """查询全部用户角色"""
     req = JsonParser(
         Argument('userNo'),

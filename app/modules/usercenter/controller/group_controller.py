@@ -13,8 +13,8 @@ from app.tools.require import require_permission
 
 @blueprint.get('/group/list')
 @require_login
-@require_permission('QUERY_GROUP')
-def query_group_list():
+@require_permission
+def query_group_list(CODE='QUERY_GROUP'):
     """分页查询分组列表"""
     req = JsonParser(
         Argument('groupNo'),
@@ -29,16 +29,16 @@ def query_group_list():
 
 @blueprint.get('/group/all')
 @require_login
-@require_permission('QUERY_GROUP')
-def query_group_all():
+@require_permission
+def query_group_all(CODE='QUERY_GROUP'):
     """查询全部分组"""
     return service.query_group_all()
 
 
 @blueprint.get('/group/info')
 @require_login
-@require_permission('QUERY_GROUP')
-def query_group_info():
+@require_permission
+def query_group_info(CODE='QUERY_GROUP'):
     """查询分组信息"""
     req = JsonParser(
         Argument('groupNo', required=True, nullable=False, help='分组编号不能为空')
@@ -48,8 +48,8 @@ def query_group_info():
 
 @blueprint.post('/group')
 @require_login
-@require_permission('CREATE_GROUP')
-def create_group():
+@require_permission
+def create_group(CODE='CREATE_GROUP'):
     """新增分组"""
     req = JsonParser(
         Argument('groupName', required=True, nullable=False, help='分组名称不能为空'),
@@ -61,8 +61,8 @@ def create_group():
 
 @blueprint.put('/group')
 @require_login
-@require_permission('MODIFY_GROUP')
-def modify_group():
+@require_permission
+def modify_group(CODE='MODIFY_GROUP'):
     """更新分组信息"""
     req = JsonParser(
         Argument('groupNo', required=True, nullable=False, help='分组编号不能为空'),
@@ -75,8 +75,8 @@ def modify_group():
 
 @blueprint.put('/group/state')
 @require_login
-@require_permission('MODIFY_GROUP')
-def modify_group_state():
+@require_permission
+def modify_group_state(CODE='MODIFY_GROUP'):
     """更新分组状态"""
     req = JsonParser(
         Argument('groupNo', required=True, nullable=False, help='分组编号不能为空'),
@@ -87,8 +87,8 @@ def modify_group_state():
 
 @blueprint.delete('/group')
 @require_login
-@require_permission('REMOVE_GROUP')
-def remove_group():
+@require_permission
+def remove_group(CODE='REMOVE_GROUP'):
     """删除分组"""
     req = JsonParser(
         Argument('groupNo', required=True, nullable=False, help='分组编号不能为空')

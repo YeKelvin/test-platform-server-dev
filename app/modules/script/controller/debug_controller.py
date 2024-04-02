@@ -12,8 +12,8 @@ from app.tools.require import require_permission
 
 @blueprint.get('/collection/json')
 @require_login
-@require_permission('QUERY_SCRIPT_AS_JSON')
-def query_collection_json():
+@require_permission
+def query_collection_json(CODE='QUERY_SCRIPT'):
     """查询测试集合的脚本(JSON)"""
     req = JsonParser(
         Argument('collectionNo', required=True, nullable=False, help='集合编号不能为空'),
@@ -25,8 +25,8 @@ def query_collection_json():
 
 @blueprint.get('/worker/json')
 @require_login
-@require_permission('QUERY_SCRIPT_AS_JSON')
-def query_worker_json():
+@require_permission
+def query_worker_json(CODE='QUERY_SCRIPT'):
     """查询测试用例的脚本(JSON)"""
     req = JsonParser(
         Argument('workerNo', required=True, nullable=False, help='工作者编号不能为空'),
@@ -38,8 +38,8 @@ def query_worker_json():
 
 @blueprint.get('/snippet/json')
 @require_login
-@require_permission('QUERY_SCRIPT_AS_JSON')
-def query_snippet_json():
+@require_permission
+def query_snippet_json(CODE='QUERY_SCRIPT'):
     """查询片段集合的脚本(JSON)"""
     req = JsonParser(
         Argument('collectionNo', required=True, nullable=False, help='集合编号不能为空'),

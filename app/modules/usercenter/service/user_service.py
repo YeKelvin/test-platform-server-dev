@@ -44,8 +44,8 @@ from app.tools.identity import new_id
 from app.tools.security import check_password
 from app.tools.security import encrypt_password
 from app.tools.service import http_service
+from app.tools.validator import check_absent
 from app.tools.validator import check_exists
-from app.tools.validator import check_not_exists
 from app.utils.rsa_util import decrypt_by_rsa_private_key
 from app.utils.sqlalchemy_util import QueryCondition
 from app.utils.time_util import timestamp_now
@@ -259,21 +259,21 @@ def create_user(req):
     # 查询用户登录信息
     login_name = req.loginName.strip().lower()
     login_info = user_login_info_dao.select_by_loginname(login_name)
-    check_not_exists(login_info, error='登录账号已存在')
+    check_absent(login_info, error='登录账号已存在')
 
     # 查询手机号是否存在
     user_mobile = req.mobile
     if user_mobile:
         user_mobile = user_mobile.strip()
         mobile = user_dao.select_first(MOBILE=user_mobile)
-        check_not_exists(mobile, error='手机号已被占用')
+        check_absent(mobile, error='手机号已被占用')
 
     # 查询邮箱是否存在
     user_email = req.email
     if user_email:
         user_email = user_email.strip().lower()
         email = user_dao.select_first(EMAIL=user_email)
-        check_not_exists(email, error='邮箱已被占用')
+        check_absent(email, error='邮箱已被占用')
 
     # 创建用户
     user_no = new_id()
@@ -530,7 +530,7 @@ def update_user_login_info_by_mobile(user_no, old_mobile, new_mobile):
             return
         # 判断新手机号是否存在
         new_login_info = user_login_info_dao.select_by_loginname(new_mobile)
-        check_not_exists(new_login_info, error='手机号已存在')
+        check_absent(new_login_info, error='手机号已存在')
         # 更新或插入手机号登录方式
         if old_login_info:
             old_login_info.update(LOGIN_NAME=new_mobile)
@@ -557,7 +557,7 @@ def update_user_login_info_by_email(user_no, old_email, new_email):
             return
         # 判断新邮箱是否存在
         new_login_info = user_login_info_dao.select_by_loginname(new_email)
-        check_not_exists(new_login_info, error='邮箱已存在')
+        check_absent(new_login_info, error='邮箱已存在')
         # 更新或插入邮箱登录方式
         if old_login_info:
             old_login_info.update(LOGIN_NAME=new_email)

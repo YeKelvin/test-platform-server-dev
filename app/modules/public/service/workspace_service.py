@@ -21,8 +21,8 @@ from app.modules.usercenter.model import TUserRole
 from app.tools.exceptions import ServiceError
 from app.tools.identity import new_id
 from app.tools.service import http_service
+from app.tools.validator import check_absent
 from app.tools.validator import check_exists
-from app.tools.validator import check_not_exists
 from app.utils.sqlalchemy_util import QueryCondition
 
 
@@ -103,7 +103,7 @@ def query_workspace_info(req):
 def create_workspace(req):
     # 名称唯一性校验
     workspace = workspace_dao.select_by_name(req.workspaceName)
-    check_not_exists(workspace, error='工作空间已存在')
+    check_absent(workspace, error='工作空间已存在')
 
     # 新增空间
     workspace_no = new_id()

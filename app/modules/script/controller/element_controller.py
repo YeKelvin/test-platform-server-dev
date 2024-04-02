@@ -13,8 +13,8 @@ from app.tools.require import require_permission
 
 @blueprint.get('/element/list')
 @require_login
-@require_permission('QUERY_ELEMENT')
-def query_element_list():
+@require_permission
+def query_element_list(CODE='QUERY_ELEMENT'):
     """分页查询元素列表"""
     req = JsonParser(
         Argument('workspaceNo'),
@@ -33,8 +33,8 @@ def query_element_list():
 
 @blueprint.get('/element/all')
 @require_login
-@require_permission('QUERY_ELEMENT')
-def query_element_all():
+@require_permission
+def query_element_all(CODE='QUERY_ELEMENT'):
     """查询全部元素"""
     req = JsonParser(
         Argument('workspaceNo'),
@@ -47,8 +47,8 @@ def query_element_all():
 
 @blueprint.get('/element/all/with/children')
 @require_login
-@require_permission('QUERY_ELEMENT')
-def query_element_all_with_children():
+@require_permission
+def query_element_all_with_children(CODE='QUERY_ELEMENT'):
     """查询全部元素及其子代"""
     req = JsonParser(
         Argument('workspaceNo'),
@@ -63,8 +63,8 @@ def query_element_all_with_children():
 
 @blueprint.get('/element/info')
 @require_login
-@require_permission('QUERY_ELEMENT')
-def query_element_info():
+@require_permission
+def query_element_info(CODE='QUERY_ELEMENT'):
     """查询元素信息"""
     req = JsonParser(
         Argument('elementNo', required=True, nullable=False, help='元素编号不能为空')
@@ -74,8 +74,8 @@ def query_element_info():
 
 @blueprint.get('/element/children')
 @require_login
-@require_permission('QUERY_ELEMENT')
-def query_element_tree():
+@require_permission
+def query_element_tree(CODE='QUERY_ELEMENT'):
     """查询元素子代"""
     req = JsonParser(
         Argument('elementNo', required=True, nullable=False, help='元素编号不能为空'),
@@ -84,10 +84,10 @@ def query_element_tree():
     return service.query_element_tree(req)
 
 
-@blueprint.get('/element/tree/by/roots')
+@blueprint.get('/element/tree/by-roots')
 @require_login
-@require_permission('QUERY_ELEMENT')
-def query_element_tree_by_roots():
+@require_permission
+def query_element_tree_by_roots(CODE='QUERY_ELEMENT'):
     """根据编号列表批量查询子代元素"""
     req = JsonParser(
         Argument('roots', type=list, required=True, nullable=False, help='元素编号列表不能为空'),
@@ -98,8 +98,8 @@ def query_element_tree_by_roots():
 
 @blueprint.post('/element')
 @require_login
-@require_permission('CREATE_ELEMENT')
-def create_element():
+@require_permission
+def create_element(CODE='CREATE_ELEMENT'):
     """新增根元素"""
     req = JsonParser(
         Argument('elementName', required=True, nullable=False, help='元素名称不能为空'),
@@ -115,8 +115,8 @@ def create_element():
 
 @blueprint.post('/element/child')
 @require_login
-@require_permission('CREATE_ELEMENT')
-def create_element_child():
+@require_permission
+def create_element_child(CODE='CREATE_ELEMENT'):
     """新增子元素"""
     req = JsonParser(
         Argument('rootNo', required=True, nullable=False, help='根元素编号不能为空'),
@@ -134,8 +134,8 @@ def create_element_child():
 
 @blueprint.put('/element')
 @require_login
-@require_permission('MODIFY_ELEMENT')
-def modify_element():
+@require_permission
+def modify_element(CODE='MODIFY_ELEMENT'):
     """修改元素"""
     req = JsonParser(
         Argument('elementNo', required=True, nullable=False, help='元素编号不能为空'),
@@ -150,8 +150,8 @@ def modify_element():
 
 @blueprint.delete('/element')
 @require_login
-@require_permission('REMOVE_ELEMENT')
-def remove_element():
+@require_permission
+def remove_element(CODE='REMOVE_ELEMENT'):
     """删除元素"""
     req = JsonParser(
         Argument('elementNo', required=True, nullable=False, help='元素编号不能为空')
@@ -161,8 +161,8 @@ def remove_element():
 
 @blueprint.put('/element/enable')
 @require_login
-@require_permission('MODIFY_ELEMENT')
-def enable_element():
+@require_permission
+def enable_element(CODE='MODIFY_ELEMENT'):
     """启用元素"""
     req = JsonParser(
         Argument('elementNo', required=True, nullable=False, help='元素编号不能为空')
@@ -172,8 +172,8 @@ def enable_element():
 
 @blueprint.put('/element/disable')
 @require_login
-@require_permission('MODIFY_ELEMENT')
-def disable_element():
+@require_permission
+def disable_element(CODE='MODIFY_ELEMENT'):
     """禁用元素"""
     req = JsonParser(
         Argument('elementNo', required=True, nullable=False, help='元素编号不能为空')
@@ -183,8 +183,8 @@ def disable_element():
 
 @blueprint.put('/element/skip')
 @require_login
-@require_permission('MODIFY_ELEMENT')
-def skip_element():
+@require_permission
+def skip_element(CODE='MODIFY_ELEMENT'):
     """跳过元素"""
     req = JsonParser(
         Argument('elementNo', required=True, nullable=False, help='元素编号不能为空')
@@ -194,8 +194,8 @@ def skip_element():
 
 @blueprint.put('/element/state/toggle')
 @require_login
-@require_permission('MODIFY_ELEMENT')
-def toggle_element_state():
+@require_permission
+def toggle_element_state(CODE='MODIFY_ELEMENT'):
     """切换元素状态"""
     req = JsonParser(
         Argument('elementNo', required=True, nullable=False, help='元素编号不能为空')
@@ -205,8 +205,8 @@ def toggle_element_state():
 
 @blueprint.post('/element/move')
 @require_login
-@require_permission('MOVE_ELEMENT')
-def move_element():
+@require_permission
+def move_element(CODE='MOVE_ELEMENT'):
     """移动元素"""
     req = JsonParser(
         Argument('sourceNo', required=True, nullable=False, help='Source元素编号不能为空'),
@@ -219,8 +219,8 @@ def move_element():
 
 @blueprint.post('/element/duplicate')
 @require_login
-@require_permission('COPY_ELEMENT')
-def duplicate_element():
+@require_permission
+def duplicate_element(CODE='COPY_ELEMENT'):
     """复制元素及其子代"""
     req = JsonParser(
         Argument('elementNo', required=True, nullable=False, help='元素编号不能为空')
@@ -230,8 +230,8 @@ def duplicate_element():
 
 @blueprint.post('/element/paste')
 @require_login
-@require_permission('PASTE_ELEMENT')
-def paste_element():
+@require_permission
+def paste_element(CODE='PASTE_ELEMENT'):
     """剪贴元素"""
     req = JsonParser(
         Argument('sourceNo', required=True, nullable=False, help='Source元素编号不能为空'),
@@ -243,8 +243,8 @@ def paste_element():
 
 @blueprint.get('/element/components')
 @require_login
-@require_permission('QUERY_ELEMENT')
-def query_element_components():
+@require_permission
+def query_element_components(CODE='QUERY_ELEMENT'):
     """查询元素组件"""
     req = JsonParser(
         Argument('elementNo', required=True, nullable=False, help='元素编号不能为空')
@@ -254,8 +254,8 @@ def query_element_components():
 
 @blueprint.post('/element/copy/to/workspace')
 @require_login
-@require_permission('COPY_ELEMENT')
-def copy_element_to_workspace():
+@require_permission
+def copy_element_to_workspace(CODE='COPY_ELEMENT'):
     """复制集合到指定空间"""
     req = JsonParser(
         Argument('workspaceNo', required=True, nullable=False, help='空间编号不能为空'),
@@ -266,8 +266,8 @@ def copy_element_to_workspace():
 
 @blueprint.post('/element/move/to/workspace')
 @require_login
-@require_permission('MOVE_ELEMENT')
-def move_element_to_workspace():
+@require_permission
+def move_element_to_workspace(CODE='MOVE_ELEMENT'):
     """移动集合到指定空间"""
     req = JsonParser(
         Argument('workspaceNo', required=True, nullable=False, help='空间编号不能为空'),
@@ -278,8 +278,8 @@ def move_element_to_workspace():
 
 @blueprint.get('/element/config/database/all')
 @require_login
-@require_permission('QUERY_ELEMENT')
-def query_database_config_all():
+@require_permission
+def query_database_config_all(CODE='QUERY_ELEMENT'):
     """查询全部数据库配置"""
     req = JsonParser(
         Argument('workspaceNo')
@@ -289,8 +289,8 @@ def query_database_config_all():
 
 @blueprint.get('/element/config/httpheader/template/all')
 @require_login
-@require_permission('QUERY_ELEMENT')
-def query_httpheader_template_all():
+@require_permission
+def query_httpheader_template_all(CODE='QUERY_ELEMENT'):
     """查询全部HTTP请求头模板"""
     req = JsonParser(
         Argument('workspaceNo')
@@ -300,8 +300,8 @@ def query_httpheader_template_all():
 
 @blueprint.get('/element/config/httpheader/all/by-template')
 @require_login
-@require_permission('QUERY_ELEMENT')
-def query_httpheader_all_by_template():
+@require_permission
+def query_httpheader_all_by_template(CODE='QUERY_ELEMENT'):
     """根据列表批量查询请求头"""
     req = JsonParser(
         Argument('templates', type=list, required=True, nullable=False, help='模板编号数组不能为空')

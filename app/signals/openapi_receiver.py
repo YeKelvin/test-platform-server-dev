@@ -15,7 +15,7 @@ def record_openapi_log(sender, method, uri, request, response, success, elapsed)
     """记录openapi调用日志（POST、PUT、DELETE）"""
     record = TOpenApiLog()
     record.LOG_NO=g.trace_id,
-    record.APP_NO=g.thirdparty_app_no,
+    record.APP_NO=g.tp_app_no,
     record.IP=g.ip,
     record.URI=uri,
     record.METHOD=method,

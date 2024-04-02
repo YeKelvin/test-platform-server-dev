@@ -13,7 +13,7 @@ from app.signals import record_delete_signal
 from app.signals import record_insert_signal
 from app.signals import record_update_signal
 from app.signals import restapi_log_signal
-from app.tools.cache import RULE_MAP
+from app.tools.cache import API_DOC_STORAGER
 from app.tools.localvars import get_trace_id
 from app.utils.json_util import to_json
 
@@ -34,7 +34,7 @@ def record_restapi_log(sender, method, uri, request, response, success, elapsed)
             if path in uri:
                 return
         # 获取接口描述
-        desc = RULE_MAP.get(f'{method} {uri}')
+        desc = API_DOC_STORAGER.get(f'{method}://{uri}')
         if not desc:
             logger.warning(f'uri:[ {method} {uri} ] 缺失接口描述')
         # 记录日志

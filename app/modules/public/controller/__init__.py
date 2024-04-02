@@ -7,7 +7,7 @@ from flask import Blueprint
 
 blueprint = Blueprint('public', __name__, url_prefix='/public')
 
-
+# TODO: 拆模块 public, message
 from . import message_controller                # noqa
 from . import tag_controller                    # noqa
 from . import workspace_controller              # noqa

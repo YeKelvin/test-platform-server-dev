@@ -3,7 +3,7 @@
 # @Time    : 2023-04-17 17:14:51
 # @Author  : Kelvin.Ye
 from app.modules.opencenter.controller import blueprint
-from app.modules.opencenter.enum import APPState
+from app.modules.opencenter.enum import AppState
 from app.modules.opencenter.service import application_service as service
 from app.tools.parser import Argument
 from app.tools.parser import JsonParser
@@ -13,8 +13,8 @@ from app.tools.require import require_permission
 
 @blueprint.get('/application/list')
 @require_login
-@require_permission('QUERY_APPLICATION')
-def query_application_list():
+@require_permission
+def query_application_list(CODE='QUERY_APPLICATION'):
     """分页查询应用列表"""
     req = JsonParser(
         Argument('appNo'),
@@ -30,8 +30,8 @@ def query_application_list():
 
 @blueprint.get('/application/info')
 @require_login
-@require_permission('QUERY_APPLICATION')
-def query_application_info():
+@require_permission
+def query_application_info(CODE='QUERY_APPLICATION'):
     """查询应用信息"""
     req = JsonParser(
         Argument('appNo', required=True, nullable=False, help='应用编号不能为空')
@@ -41,8 +41,8 @@ def query_application_info():
 
 @blueprint.post('/application')
 @require_login
-@require_permission('CREATE_APPLICATION')
-def create_application():
+@require_permission
+def create_application(CODE='CREATE_APPLICATION'):
     """新增第三方应用"""
     req = JsonParser(
         Argument('appName', required=True, nullable=False, help='应用名称不能为空'),
@@ -54,8 +54,8 @@ def create_application():
 
 @blueprint.put('/application')
 @require_login
-@require_permission('MODIFY_APPLICATION')
-def modify_application():
+@require_permission
+def modify_application(CODE='MODIFY_APPLICATION'):
     """更新应用信息"""
     req = JsonParser(
         Argument('appNo', required=True, nullable=False, help='应用编号不能为空'),
@@ -68,31 +68,20 @@ def modify_application():
 
 @blueprint.put('/application/state')
 @require_login
-@require_permission('MODIFY_APPLICATION')
-def modify_application_state():
+@require_permission
+def modify_application_state(CODE='MODIFY_APPLICATION'):
     """更新应用状态"""
     req = JsonParser(
         Argument('appNo', required=True, nullable=False, help='应用编号不能为空'),
-        Argument('state', required=True, nullable=False, enum=APPState, help='应用状态不能为空')
+        Argument('state', required=True, nullable=False, enum=AppState, help='应用状态不能为空')
     ).parse()
     return service.modify_application_state(req)
 
 
-@blueprint.post('/application/secret/reset')
-@require_login
-@require_permission('RESET_APPLICATION_SECRET')
-def reset_application_secret():
-    """重置应用密钥"""
-    req = JsonParser(
-        Argument('appNo', required=True, nullable=False, help='应用编号不能为空')
-    ).parse()
-    return service.reset_application_secret(req)
-
-
 @blueprint.delete('/application')
 @require_login
-@require_permission('REMOVE_APPLICATION')
-def remove_application():
+@require_permission
+def remove_application(CODE='REMOVE_APPLICATION'):
     """删除应用"""
     req = JsonParser(
         Argument('appNo', required=True, nullable=False, help='应用编号不能为空')

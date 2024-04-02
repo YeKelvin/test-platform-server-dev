@@ -5,7 +5,7 @@
 from enum import Enum
 
 
-class APPState(Enum):
+class AppState(Enum):
 
     # 启用
     ENABLE = 'ENABLE'

@@ -14,8 +14,8 @@ from app.modules.script.model import TVariableDataset
 from app.tools.exceptions import ServiceError
 from app.tools.identity import new_id
 from app.tools.service import http_service
+from app.tools.validator import check_absent
 from app.tools.validator import check_exists
-from app.tools.validator import check_not_exists
 from app.tools.validator import check_workspace_permission
 from app.utils.sqlalchemy_util import QueryCondition
 
@@ -89,7 +89,7 @@ def create_dataset(req):
         DATASET_NAME=req.datasetName,
         DATASET_TYPE=req.datasetType
     )
-    check_not_exists(dataset, error='变量集已存在')
+    check_absent(dataset, error='变量集已存在')
 
     # 变量集为ENVIRONMENT或CUSTOM时，工作空间编号不能为空
     if req.datasetType != VariableDatasetType.GLOBAL.value and not req.workspaceNo:
@@ -147,7 +147,7 @@ def create_variable(req):
 
     # 查询变量信息
     variable = variable_dao.select_by_dataset_and_name(req.datasetNo, req.variableName)
-    check_not_exists(variable, error='变量集已存在')
+    check_absent(variable, error='变量集已存在')
 
     # 查询变量集信息
     dataset = variable_dataset_dao.select_by_no(req.datasetNo)
@@ -320,7 +320,7 @@ def create_variables(req):
 
         # 查询变量信息
         variable = variable_dao.select_by_dataset_and_name(req.datasetNo, vari.variableName)
-        check_not_exists(variable, error=f'变量名称:[ {vari.variableName} ] 变量已存在')
+        check_absent(variable, error=f'变量名称:[ {vari.variableName} ] 变量已存在')
 
         # 新增变量
         TVariable.insert(
@@ -362,7 +362,7 @@ def modify_variables(req):
         else:
             # 查询变量信息
             variable = variable_dao.select_by_dataset_and_name(req.datasetNo, vari.variableName)
-            check_not_exists(variable, error=f'变量名称:[ {vari.variableName} ] 变量已存在')
+            check_absent(variable, error=f'变量名称:[ {vari.variableName} ] 变量已存在')
             # 新增变量
             TVariable.insert(
                 DATASET_NO=req.datasetNo,

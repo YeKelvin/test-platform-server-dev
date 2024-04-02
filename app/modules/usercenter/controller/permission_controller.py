@@ -12,8 +12,8 @@ from app.tools.require import require_permission
 
 @blueprint.get('/permission/all')
 @require_login
-@require_permission('QUERY_PERMISSION')
-def query_permission_all():
+@require_permission
+def query_permission_all(CODE='QUERY_PERMISSION'):
     """查询全部权限"""
     req = JsonParser(
         Argument('moduleCodes', type=list),
@@ -21,3 +21,11 @@ def query_permission_all():
         Argument('actExcludes', type=list),
     ).parse()
     return service.query_permission_all(req)
+
+
+@blueprint.get('/open/permission/all')
+@require_login
+@require_permission
+def query_open_permission_all(CODE='QUERY_PERMISSION'):
+    """查询全部开放接口的权限"""
+    return service.query_open_permission_all()

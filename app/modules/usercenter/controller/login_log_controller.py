@@ -12,8 +12,8 @@ from app.tools.require import require_permission
 
 @blueprint.get('/login/log/list')
 @require_login
-@require_permission('QUERY_LOG')
-def query_login_log_list():
+@require_permission
+def query_login_log_list(CODE='QUERY_LOG'):
     """分页查询操作日志列表"""
     req = JsonParser(
         Argument('userName'),

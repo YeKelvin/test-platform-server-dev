@@ -45,7 +45,7 @@ def check_login():
     issued_at = None
     # 校验access-token
     if 'access-token' not in request.headers:
-        logger.info(f'socketid:[ {request.sid} ] 请求头缺失access-token')
+        logger.info(f'socketid:[ {request.sid} ] 缺失令牌')
         socketio.disconnect()
         return
     # 获取access-token

@@ -12,8 +12,8 @@ from app.tools.require import require_permission
 
 @blueprint.get('/workspace/list')
 @require_login
-@require_permission('QUERY_WORKSPACE')
-def query_workspace_list():
+@require_permission
+def query_workspace_list(CODE='QUERY_WORKSPACE'):
     """分页查询工作空间列表"""
     req = JsonParser(
         Argument('workspaceNo'),
@@ -28,8 +28,8 @@ def query_workspace_list():
 
 @blueprint.get('/workspace/all')
 @require_login
-@require_permission('QUERY_WORKSPACE')
-def query_workspace_all():
+@require_permission
+def query_workspace_all(CODE='QUERY_WORKSPACE'):
     """查询全部工作空间"""
     req = JsonParser(
         Argument('userNo')
@@ -39,8 +39,8 @@ def query_workspace_all():
 
 @blueprint.get('/workspace/info')
 @require_login
-@require_permission('QUERY_WORKSPACE')
-def query_workspace_info():
+@require_permission
+def query_workspace_info(CODE='QUERY_WORKSPACE'):
     """查询工作空间信息"""
     req = JsonParser(
         Argument('workspaceNo', required=True, nullable=False, help='工作空间编号不能为空')
@@ -50,8 +50,8 @@ def query_workspace_info():
 
 @blueprint.post('/workspace')
 @require_login
-@require_permission('CREATE_WORKSPACE')
-def create_workspace():
+@require_permission
+def create_workspace(CODE='CREATE_WORKSPACE'):
     """新增工作空间"""
     req = JsonParser(
         Argument('workspaceName', required=True, nullable=False, help='工作空间名称不能为空'),
@@ -63,8 +63,8 @@ def create_workspace():
 
 @blueprint.put('/workspace')
 @require_login
-@require_permission('MODIFY_WORKSPACE')
-def modify_workspace():
+@require_permission
+def modify_workspace(CODE='MODIFY_WORKSPACE'):
     """修改工作空间"""
     req = JsonParser(
         Argument('workspaceNo', required=True, nullable=False, help='工作空间编号不能为空'),
@@ -77,8 +77,8 @@ def modify_workspace():
 
 @blueprint.delete('/workspace')
 @require_login
-@require_permission('REMOVE_WORKSPACE')
-def remove_workspace():
+@require_permission
+def remove_workspace(CODE='REMOVE_WORKSPACE'):
     """删除工作空间"""
     req = JsonParser(
         Argument('workspaceNo', required=True, nullable=False, help='工作空间编号不能为空'),

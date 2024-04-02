@@ -59,7 +59,7 @@ class TRole(TableModel, BaseColumn):
 
 
 class TRolePermission(TableModel, BaseColumn):
-    """角色权限关联表"""
+    """角色权限表"""
     __tablename__ = 'ROLE_PERMISSION'
     ROLE_NO = db.Column(db.String(32), index=True, nullable=False, comment='角色编号')
     PERMISSION_NO = db.Column(db.String(32), index=True, nullable=False, comment='权限编号')
@@ -99,7 +99,7 @@ class TPermissionObject(TableModel, BaseColumn):
 
 
 class TUserRole(TableModel, BaseColumn):
-    """用户角色关联表"""
+    """用户角色表"""
     __tablename__ = 'USER_ROLE'
     USER_NO = db.Column(db.String(32), index=True, nullable=False, comment='用户编号')
     ROLE_NO = db.Column(db.String(32), index=True, nullable=False, comment='角色编号')

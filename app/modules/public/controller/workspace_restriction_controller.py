@@ -12,8 +12,8 @@ from app.tools.require import require_permission
 
 @blueprint.get('/workspace/restriction')
 @require_login
-@require_permission('QUERY_WORKSPACE_RESTRICTION')
-def query_workspace_restriction():
+@require_permission
+def query_workspace_restriction(CODE='QUERY_WORKSPACE_RESTRICTION'):
     """查询空间全部限制"""
     req = JsonParser(
         Argument('workspaceNo', required=True, nullable=False, help='空间编号不能为空')
@@ -23,8 +23,8 @@ def query_workspace_restriction():
 
 @blueprint.post('/workspace/restriction')
 @require_login
-@require_permission('SET_WORKSPACE_RESTRICTION')
-def set_workspace_restriction():
+@require_permission
+def set_workspace_restriction(CODE='SET_WORKSPACE_RESTRICTION'):
     """设置空间限制"""
     req = JsonParser(
         Argument('workspaceNo', required=True, nullable=False, help='空间编号不能为空'),

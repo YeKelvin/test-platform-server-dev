@@ -12,8 +12,8 @@ from app.tools.require import require_permission
 
 @blueprint.get('/workspace/member/list')
 @require_login
-@require_permission('QUERY_WORKSPACE_MEMBER')
-def query_workspace_member_list():
+@require_permission
+def query_workspace_member_list(CODE='QUERY_WORKSPACE_MEMBER'):
     """分页查询空间成员列表"""
     req = JsonParser(
         Argument('workspaceNo'),
@@ -25,8 +25,8 @@ def query_workspace_member_list():
 
 @blueprint.get('/workspace/member/all')
 @require_login
-@require_permission('QUERY_WORKSPACE_MEMBER')
-def query_workspace_member_all():
+@require_permission
+def query_workspace_member_all(CODE='QUERY_WORKSPACE_MEMBER'):
     """查询所有空间成员"""
     req = JsonParser(
         Argument('workspaceNo', required=True, nullable=False, help='空间编号不能为空')
@@ -36,8 +36,8 @@ def query_workspace_member_all():
 
 @blueprint.put('/workspace/member')
 @require_login
-@require_permission('MODIFY_WORKSPACE_MEMBER')
-def modify_workspace_member():
+@require_permission
+def modify_workspace_member(CODE='MODIFY_WORKSPACE_MEMBER'):
     """修改空间成员"""
     req = JsonParser(
         Argument('workspaceNo'),

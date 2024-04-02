@@ -29,8 +29,8 @@ from app.tools.identity import new_id
 from app.tools.localvars import get_trace_id
 from app.tools.localvars import get_user_no
 from app.tools.service import http_service
+from app.tools.validator import check_absent
 from app.tools.validator import check_exists
-from app.tools.validator import check_not_exists
 from app.tools.validator import check_workspace_permission
 from app.utils.sqlalchemy_util import QueryCondition
 from app.utils.time_util import TIMEFMT
@@ -133,7 +133,7 @@ def create_job(req):
             TScheduleJob.JOB_ARGS['worker_no'].as_string() == req.jobArgs['worker_no'],
             TScheduleJob.JOB_STATE != JobState.CLOSED.value
         ).first()
-    check_not_exists(job, error='相同类型的任务已存在')
+    check_absent(job, error='相同类型的任务已存在')
 
     # 添加作业
     job_no = new_id()
@@ -221,7 +221,7 @@ def modify_job(req):
             TScheduleJob.JOB_ARGS['worker_no'].as_string() == req.jobArgs['worker_no'],
             TScheduleJob.JOB_STATE != JobState.CLOSED.value
         ).first()
-    check_not_exists(existing_job, error='相同内容的任务已存在')
+    check_absent(existing_job, error='相同内容的任务已存在')
 
     # 更新作业信息
     job.update(

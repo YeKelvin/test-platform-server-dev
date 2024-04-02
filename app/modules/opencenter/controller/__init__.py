@@ -10,3 +10,4 @@ blueprint = Blueprint('opencenter', __name__, url_prefix='/opencenter')
 
 from . import apilog_controller         # noqa
 from . import application_controller    # noqa
+from . import token_controller          # noqa

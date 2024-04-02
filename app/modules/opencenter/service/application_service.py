@@ -3,7 +3,7 @@
 # @Time    : 2023-04-17 17:15:40
 # @Author  : Kelvin.Ye
 from app.modules.opencenter.dao import third_party_application_dao
-from app.modules.opencenter.enum import APPState
+from app.modules.opencenter.enum import AppState
 from app.modules.opencenter.model import TThirdPartyApplication
 from app.tools.exceptions import ServiceError
 from app.tools.identity import new_id
@@ -76,7 +76,7 @@ def create_application(req):
         APP_CODE=req.appCode,
         APP_DESC=req.appDesc,
         APP_SECRET=new_ulid(),
-        STATE=APPState.ENABLE.value
+        STATE=AppState.ENABLE.value
     )
 
     return {'appNo': app_no}
@@ -110,18 +110,6 @@ def modify_application_state(req):
 
     # 更新应用状态
     tpa.update(STATE=req.state)
-
-
-@http_service
-def reset_application_secret(req):
-    # 查询应用
-    tpa = third_party_application_dao.select_by_no(req.appNo)
-    check_exists(tpa, error='应用不存在')
-
-    # 重置应用密钥
-    tpa.update(
-        APP_SECRET=new_ulid()
-    )
 
 
 @http_service

@@ -14,8 +14,8 @@ from app.tools.require import require_permission
 
 @blueprint.get('/job/list')
 @require_login
-@require_permission('QUERY_JOB')
-def query_job_list():
+@require_permission
+def query_job_list(CODE='QUERY_JOB'):
     """分页查询定时任务列表"""
     req = JsonParser(
         Argument('workspaceNo'),
@@ -33,8 +33,8 @@ def query_job_list():
 
 @blueprint.get('/job/info')
 @require_login
-@require_permission('QUERY_JOB')
-def query_job_info():
+@require_permission
+def query_job_info(CODE='QUERY_JOB'):
     """查询任务信息"""
     req = JsonParser(
         Argument('jobNo', required=True, nullable=False, help='作业编号不能为空')
@@ -44,8 +44,8 @@ def query_job_info():
 
 @blueprint.post('/job')
 @require_login
-@require_permission('CREATE_JOB')
-def create_job():
+@require_permission
+def create_job(CODE='CREATE_JOB'):
     """新增定时任务"""
     req = JsonParser(
         Argument('workspaceNo', required=True, nullable=False, help='空间编号不能为空'),
@@ -61,8 +61,8 @@ def create_job():
 
 @blueprint.put('/job')
 @require_login
-@require_permission('MODIFY_JOB')
-def modify_job():
+@require_permission
+def modify_job(CODE='MODIFY_JOB'):
     """修改定时任务"""
     req = JsonParser(
         Argument('jobNo', required=True, nullable=False, help='作业编号不能为空'),
@@ -77,8 +77,8 @@ def modify_job():
 
 @blueprint.put('/job/pause')
 @require_login
-@require_permission('PAUSE_JOB')
-def pause_job():
+@require_permission
+def pause_job(CODE='PAUSE_JOB'):
     """暂停定时任务"""
     req = JsonParser(
         Argument('jobNo', required=True, nullable=False, help='作业编号不能为空'),
@@ -88,8 +88,8 @@ def pause_job():
 
 @blueprint.put('/job/resume')
 @require_login
-@require_permission('RESUME_JOB')
-def resume_job():
+@require_permission
+def resume_job(CODE='RESUME_JOB'):
     """恢复定时任务"""
     req = JsonParser(
         Argument('jobNo', required=True, nullable=False, help='作业编号不能为空'),
@@ -99,8 +99,8 @@ def resume_job():
 
 @blueprint.put('/job/remove')
 @require_login
-@require_permission('REMOVE_JOB')
-def remove_job():
+@require_permission
+def remove_job(CODE='REMOVE_JOB'):
     """关闭定时任务"""
     req = JsonParser(
         Argument('jobNo', required=True, nullable=False, help='作业编号不能为空')
@@ -110,8 +110,8 @@ def remove_job():
 
 @blueprint.get('/job/log/list')
 @require_login
-@require_permission('QUERY_JOB')
-def query_job_log_list():
+@require_permission
+def query_job_log_list(CODE='QUERY_JOB'):
     """分业查询任务历史列表"""
     req = JsonParser(
         Argument('workspaceNo', required=True, nullable=False, help='空间编号不能为空'),

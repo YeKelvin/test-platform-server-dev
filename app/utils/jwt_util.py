@@ -16,8 +16,8 @@ def jwt_encode(payload: dict, secret_key: str) -> str:
     return jwt.encode(payload, secret_key, algorithm='HS256', headers=ENCODE_HEADERS)
 
 
-def jwt_decode(encoded: str, secret_key: str) -> dict:
-    return jwt.decode(encoded, secret_key, algorithms=['HS256'], options=DECODE_OPTIONS)
+def jwt_decode(encoded: str, secret_key: str, options=DECODE_OPTIONS) -> dict:
+    return jwt.decode(encoded, secret_key, algorithms=['HS256'], options=options)
 
 
 """

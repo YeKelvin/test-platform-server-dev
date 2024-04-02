@@ -8,8 +8,8 @@ from app.modules.public.model import TNoticeRobot
 from app.tools.exceptions import ServiceError
 from app.tools.identity import new_id
 from app.tools.service import http_service
+from app.tools.validator import check_absent
 from app.tools.validator import check_exists
-from app.tools.validator import check_not_exists
 from app.utils.sqlalchemy_util import QueryCondition
 
 
@@ -94,7 +94,7 @@ def create_notice_robot(req):
         ROBOT_NAME=req.robotName,
         ROBOT_TYPE=req.robotType
     )
-    check_not_exists(robot, error='机器人已存在')
+    check_absent(robot, error='机器人已存在')
 
     # 新增机器人
     robot_no = new_id()

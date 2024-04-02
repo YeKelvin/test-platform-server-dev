@@ -62,3 +62,8 @@ class TNoticeRobot(TableModel, BaseColumn):
     ROBOT_TYPE = db.Column(db.String(16), nullable=False, comment='机器人类型(WECHAT, WECOM, DINGTALK)')
     ROBOT_CONFIG = db.Column(JSONB, comment='机器人配置')
     STATE = db.Column(db.String(16), nullable=False, default='ENABLE', comment='机器人状态(ENABLE:启用, DISABLE:禁用)')
+
+# TODO: 独立 MESSAGE 模块
+# TODO: MESSAGE 消息
+# TODO: MESSAGE_TEMPLATE 消息模板
+# TODO: MESSAGE_LOG 消息日志

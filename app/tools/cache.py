@@ -4,8 +4,8 @@
 # @Author  : Kelvin.Ye
 
 
-# 路由描述字典
-RULE_MAP = {}
+# 接口描述字典（用于记录接口日志）
+API_DOC_STORAGER = {}
 
 
 # 运行中的pymeter的缓存，用于中断执行

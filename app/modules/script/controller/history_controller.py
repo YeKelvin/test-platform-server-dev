@@ -12,8 +12,8 @@ from app.tools.require import require_permission
 
 @blueprint.get('/element/changelog/list')
 @require_login
-@require_permission('QUERY_ELEMENT')
-def query_element_changelog_list():
+@require_permission
+def query_element_changelog_list(CODE='QUERY_ELEMENT'):
     """分页查询操作日志列表"""
     req = JsonParser(
         Argument('elementNo'),

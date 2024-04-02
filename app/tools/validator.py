@@ -18,14 +18,14 @@ from app.tools.exceptions import ServiceError
 from app.utils.sqlalchemy_util import QueryCondition
 
 
-def check_not_exists(obj: any, error: str = '校验失败') -> None:
-    """检查obj对象是否为空，不为空则抛异常"""
+def check_absent(obj: any, error: str = '校验失败') -> None:
+    """检查obj对象是否不存在，如果存在就抛异常"""
     if obj:
         raise ServiceError(msg=error)
 
 
 def check_exists(obj: any, error: str = '校验失败') -> None:
-    """检查obj对象是否不为空，为空则抛异常"""
+    """检查obj对象是否存在，如果不存在就抛异常"""
     if not obj:
         raise ServiceError(msg=error)
 
