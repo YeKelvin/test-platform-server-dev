@@ -18,14 +18,7 @@ def query_permission_all(CODE='QUERY_PERMISSION'):
     req = JsonParser(
         Argument('moduleCodes', type=list),
         Argument('objectCodes', type=list),
-        Argument('actExcludes', type=list),
+        Argument('actIncludes', type=list),
+        Argument('actExcludes', type=list)
     ).parse()
     return service.query_permission_all(req)
-
-
-@blueprint.get('/open/permission/all')
-@require_login
-@require_permission
-def query_open_permission_all(CODE='QUERY_PERMISSION'):
-    """查询全部开放接口的权限"""
-    return service.query_open_permission_all()

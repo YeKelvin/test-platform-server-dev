@@ -193,7 +193,6 @@ def get_user_roles(user_no):
 def exists_user_permission(user_no, code):
     conds = [
         TPermission.DELETED == 0,
-        TPermission.STATE == 'ENABLE',
         TPermission.PERMISSION_CODE == code,
         TRolePermission.DELETED == 0,
         TRolePermission.ROLE_NO.in_(get_user_roles(user_no)),

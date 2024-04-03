@@ -5,9 +5,9 @@
 from app.database import db_query
 from app.modules.usercenter.dao import role_dao
 from app.modules.usercenter.dao import role_permission_dao
+from app.modules.usercenter.model import TModule
+from app.modules.usercenter.model import TObject
 from app.modules.usercenter.model import TPermission
-from app.modules.usercenter.model import TPermissionModule
-from app.modules.usercenter.model import TPermissionObject
 from app.modules.usercenter.model import TRolePermission
 from app.tools.service import http_service
 from app.tools.validator import check_exists
@@ -16,21 +16,21 @@ from app.utils.sqlalchemy_util import QueryCondition
 
 @http_service
 def query_role_permissions(req):
-    conds = QueryCondition(TPermissionModule, TPermissionObject, TPermission, TRolePermission)
+    conds = QueryCondition(TModule, TObject, TPermission, TRolePermission)
     conds.equal(TRolePermission.ROLE_NO, req.roleNo)
     conds.equal(TRolePermission.PERMISSION_NO, TPermission.PERMISSION_NO)
-    conds.equal(TPermission.MODULE_NO, TPermissionModule.MODULE_NO)
-    conds.equal(TPermission.OBJECT_NO, TPermissionObject.OBJECT_NO)
+    conds.equal(TPermission.MODULE_NO, TModule.MODULE_NO)
+    conds.equal(TPermission.OBJECT_NO, TObject.OBJECT_NO)
 
     resutls = (
         db_query(
-            TPermissionModule.MODULE_CODE,
-            TPermissionObject.OBJECT_CODE,
+            TModule.MODULE_CODE,
+            TObject.OBJECT_CODE,
             TPermission.PERMISSION_NO,
             TPermission.PERMISSION_NAME
         )
         .filter(*conds)
-        .order_by(TPermissionModule.MODULE_CODE.asc(), TPermissionObject.OBJECT_CODE.asc())
+        .order_by(TModule.MODULE_CODE.asc(), TObject.OBJECT_CODE.asc())
         .all()
     )
 

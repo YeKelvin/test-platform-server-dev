@@ -8,9 +8,9 @@ from app.modules.public.dao import workspace_restriction_dao
 from app.modules.public.dao import workspace_restriction_exemption_dao
 from app.modules.public.model import TWorkspaceRestriction
 from app.modules.public.model import TWorkspaceRestrictionExemption
+from app.modules.usercenter.model import TModule
+from app.modules.usercenter.model import TObject
 from app.modules.usercenter.model import TPermission
-from app.modules.usercenter.model import TPermissionModule
-from app.modules.usercenter.model import TPermissionObject
 from app.tools.service import http_service
 from app.tools.validator import check_exists
 from app.utils.sqlalchemy_util import QueryCondition
@@ -41,21 +41,21 @@ def set_workspace_restriction(req):
 
 
 def get_workspace_restriction_list(workspace_no):
-    conds = QueryCondition(TPermissionModule, TPermissionObject, TPermission, TWorkspaceRestriction)
+    conds = QueryCondition(TModule, TObject, TPermission, TWorkspaceRestriction)
     conds.equal(TWorkspaceRestriction.WORKSPACE_NO, workspace_no)
     conds.equal(TWorkspaceRestriction.PERMISSION_NO, TPermission.PERMISSION_NO)
-    conds.equal(TPermission.MODULE_NO, TPermissionModule.MODULE_NO)
-    conds.equal(TPermission.OBJECT_NO, TPermissionObject.OBJECT_NO)
+    conds.equal(TPermission.MODULE_NO, TModule.MODULE_NO)
+    conds.equal(TPermission.OBJECT_NO, TObject.OBJECT_NO)
 
     resutls = (
         db_query(
-            TPermissionModule.MODULE_CODE,
-            TPermissionObject.OBJECT_CODE,
+            TModule.MODULE_CODE,
+            TObject.OBJECT_CODE,
             TPermission.PERMISSION_NO,
             TPermission.PERMISSION_NAME
         )
         .filter(*conds)
-        .order_by(TPermissionModule.MODULE_CODE.asc(), TPermissionObject.OBJECT_CODE.asc())
+        .order_by(TModule.MODULE_CODE.asc(), TObject.OBJECT_CODE.asc())
         .all()
     )
 

@@ -7,7 +7,6 @@ from app.modules.opencenter.enum import AppState
 from app.modules.opencenter.model import TThirdPartyApplication
 from app.tools.exceptions import ServiceError
 from app.tools.identity import new_id
-from app.tools.identity import new_ulid
 from app.tools.service import http_service
 from app.tools.validator import check_exists
 from app.utils.sqlalchemy_util import QueryCondition
@@ -36,7 +35,6 @@ def query_application_list(req):
             'appName': tpa.APP_NAME,
             'appCode': tpa.APP_CODE,
             'appDesc': tpa.APP_DESC,
-            'appSecret': tpa.APP_SECRET,
             'state': tpa.STATE
         }
         for tpa in pagination.items
@@ -75,7 +73,6 @@ def create_application(req):
         APP_NAME=req.appName,
         APP_CODE=req.appCode,
         APP_DESC=req.appDesc,
-        APP_SECRET=new_ulid(),
         STATE=AppState.ENABLE.value
     )
 
