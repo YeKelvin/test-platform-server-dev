@@ -30,14 +30,16 @@ logger.configure(extra={'traceid': None})
 logger.add(
     sys.stderr,
     level=LOG_LEVEL,
+    backtrace=False,
+    diagnose=True,
     colorize=True,
     format=console_formatter,
 )
 logger.add(
     LOG_FILE_NAME + '.{time:YYYY-MM-DD}.log',
     level=LOG_LEVEL,
-    diagnose=True,
-    backtrace=True,
+    diagnose=False,  # 文件中无需参数值，以防泄露敏感信息
+    backtrace=False, # 无需打印完整的异常堆栈
     rotation='00:00',
     retention='90 days',
     format=file_formatter

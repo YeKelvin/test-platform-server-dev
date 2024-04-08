@@ -165,8 +165,8 @@ class CRUDMixin:
         if not physical:
             setattr(self, 'DELETED', self.ID)
         else:
-            super().delete()
-        self.submit()
+            db.session.delete(self)
+        db.session.flush()
 
     def norecord_delete(self, physical=False):
         """无记录删除"""

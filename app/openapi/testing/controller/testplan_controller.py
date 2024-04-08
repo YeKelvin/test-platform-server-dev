@@ -6,11 +6,11 @@ from app.openapi.testing.controller import blueprint
 from app.openapi.testing.service import testplan_service as service
 from app.tools.parser import Argument
 from app.tools.parser import JsonParser
-from app.tools.require import require_access_permission
+from app.tools.require import require_open_permission
 
 
 @blueprint.post('/testplan/execution/details')
-@require_access_permission
+@require_open_permission
 def query_execution_details():
     """查询测试计划执行详情"""
     req = JsonParser(

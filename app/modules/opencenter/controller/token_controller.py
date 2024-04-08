@@ -86,14 +86,3 @@ def remove_token(CODE='REMOVE_ACCESS_TOKEN'):
         Argument('tokenNo', required=True, nullable=False, help='令牌编号不能为空')
     ).parse()
     return service.remove_token(req)
-
-
-@blueprint.put('/token/invalid')
-@require_login
-@require_permission
-def invalid_token(CODE='INVALID_ACCESS_TOKEN'):
-    """失效令牌"""
-    req = JsonParser(
-        Argument('tokenNo', required=True, nullable=False, help='令牌编号不能为空')
-    ).parse()
-    return service.invalid_token(req)

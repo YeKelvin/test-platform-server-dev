@@ -114,7 +114,7 @@ class Argument:
                 # 转换为attribute对象
                 value = transform(value)
             else:
-                raise TypeError('Invalid Type')
+                raise TypeError('无效的类型')
             return value
         except (TypeError, ValueError, AssertionError):
             raise ParseError(f'Type Error: {self.name} type must be {self.type}')
@@ -167,7 +167,7 @@ class JsonParser:
 
     def parse(self, data=None) -> RequestDTO:
         """解析HTTP请求参数"""
-        dto = RequestDTO(dict)
+        dto = RequestDTO()
         try:
             # 校验非空
             if not self.args:

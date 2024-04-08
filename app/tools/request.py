@@ -38,12 +38,14 @@ class AttributeList(list):
 class RequestDTO:
     """请求对象"""
 
-    BUILT_IN = ['__type__', '__attrs__', '__error__']
+    BUILT_IN = ['__attrs__', '__error__']
 
-    def __init__(self, data_type: type = dict) -> None:
-        self.__type__ = data_type
-        self.__attrs__ = {}
+    def __init__(self, data: dict = None) -> None:
+        self.__attrs__ = data or {}
         self.__error__ = None
+
+    def __len__(self) -> int:
+        return len(self.__attrs__)
 
     def __setattr__(self, key, value):
         if key in RequestDTO.BUILT_IN:
@@ -65,21 +67,10 @@ class RequestDTO:
         return self.__str__()
 
     def __str__(self) -> str:
-        if self.__type__ == dict:
-            return self.__attrs__.__str__()
-        if self.__type__ == list:
-            return self.list.__str__()
-        if self.__type__ == str:
-            return self.str.__str__()
-        if self.__type__ == bool:
-            return self.bool.__str__()
-        if self.__type__ == int:
-            return self.int.__str__()
-        if self.__type__ == float:
-            return self.float.__str__()
+        return self.__attrs__.__str__()
 
 
-def transform(value: list or dict):
+def transform(value: list | dict):
     """将 dict 或 list 对象转换为 AttributeDict 对象"""
     if isinstance(value, list):
         attrs = []

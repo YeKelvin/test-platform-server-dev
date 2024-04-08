@@ -188,6 +188,8 @@ def orjson_deserializer(val):
 
 def init_openapi(app: Flask):
     """将RestAPI自动注册为OpenAPI"""
+    from app.tools.require import require_open_permission
+
     blueprint = Blueprint('autoapi', __name__, url_prefix='/openapi')
     exclude_modules = ['opencenter', 'usercenter', 'system']
     required_methods = {'GET', 'POST', 'PUT', 'DELETE'}
@@ -204,7 +206,7 @@ def init_openapi(app: Flask):
             rule=api.rule,
             methods=[*api.methods],
             endpoint=endpoint,
-            view_func=func,
+            view_func=require_open_permission(func),
         )
     app.register_blueprint(blueprint)
 

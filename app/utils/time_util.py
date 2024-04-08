@@ -9,7 +9,7 @@ from datetime import timedelta
 from datetime import timezone
 
 
-TIMEFMT = '%Y-%m-%d %H:%M:%S'
+TIMEFMT = r'%Y-%m-%d %H:%M:%S'
 
 
 def strftime(format: str = TIMEFMT) -> str:

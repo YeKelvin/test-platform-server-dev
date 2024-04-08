@@ -28,7 +28,11 @@ def http_service(func):
         # 记录开始时间
         starttime = timestamp_as_ms()
         # 获取请求对象
-        req: RequestDTO = (args[0] if args else None) or kwargs.get('req', RequestDTO())
+        req: RequestDTO = args[0] if args else None
+        if req is None:
+            req = kwargs.get('req', RequestDTO())
+        if len(req) == 0:
+            req.__attrs__ = request.json if request.is_json else request.values.to_dict()
         # 请求路径
         uri = f'{request.method} {request.path}'
         # 更新logger的record，使其指向被装饰的函数
@@ -44,7 +48,7 @@ def http_service(func):
             try:
                 # 判断request参数解析是否有异常
                 if req.__error__ is not None:
-                    res = ResponseDTO(msg=req.__error__)
+                    res = ResponseDTO(msg=req.__error__, code=ServiceStatus.CODE_600.CODE)
                 else:
                     # 调用service
                     result = func(*args, **kwargs)
@@ -74,14 +78,26 @@ def http_service(func):
                 # 记录接口耗时
                 elapsed_time = timestamp_as_ms() - starttime
                 # 记录请求日志
-                restapi_log_signal.send(
-                    method=request.method,
-                    uri=request.path,
-                    request=req.__attrs__,
-                    response=res.__dict__,
-                    success=(res.code == 200),
-                    elapsed=elapsed_time
-                )
+                if getattr(g, 'external_invoke', False):
+                    # openapi日志
+                    openapi_log_signal.send(
+                        method=request.method,
+                        uri=request.path,
+                        request=req.__attrs__,
+                        response=res.__dict__,
+                        success=(res.code == 200),
+                        elapsed=elapsed_time
+                    )
+                else:
+                    # restapi日志
+                    restapi_log_signal.send(
+                        method=request.method,
+                        uri=request.path,
+                        request=req.__attrs__,
+                        response=res.__dict__,
+                        success=(res.code == 200),
+                        elapsed=elapsed_time
+                    )
                 # 输出http响应日志
                 wlogger.info(
                     f'uri:[ {uri} ] header:[ {dict(http_res.headers)}] response:[ {res} ] elapsed:[ {elapsed_time}ms ]'

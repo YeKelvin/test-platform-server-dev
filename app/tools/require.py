@@ -12,9 +12,12 @@ import jwt
 from flask import g
 from flask import request
 from loguru import logger
+from sqlalchemy import and_
+from sqlalchemy import or_
+from sqlalchemy import select
 
 from app.extension import db
-from app.modules.opencenter.model import TThirdPartyApplication
+from app.modules.opencenter.model import TOpenAccessToken
 from app.modules.usercenter.model import TGroup
 from app.modules.usercenter.model import TGroupMember
 from app.modules.usercenter.model import TGroupRole
@@ -120,33 +123,59 @@ def require_permission(func):
     return wrapper
 
 
-def require_access_permission(func):
+def require_open_permission(func):
     """OpenAPI校验装饰器"""
-    # TODO: 要改造，要校验权限
     @wraps(func)
     def wrapper(*args, **kwargs):
-        # 从请求头中获取app信息
-        appno = request.headers['app-no']
-        appsecret = request.headers['app-secret']
-        # 校验密钥
-        tpa = (
-            TThirdPartyApplication
-            .filter_by(APP_NO=appno, APP_SECRET=appsecret)
-            .first()
+        # 校验access-token
+        if 'access-token' not in request.headers:
+            # 缺失请求头
+            return failed_response(ServiceStatus.CODE_401, msg='缺失令牌')
+        try:
+            # 解析token，获取payload
+            payload = JWTAuth.decode_token(request.headers['access-token'])
+            app_no = payload.get('app_no')
+            user_no = payload.get('user_no')
+            token_no = payload.get('token_no')
+            # 存储应用编号
+            app_no and localvars.set('app_no', app_no)
+            # 存储用户编号
+            user_no and localvars.set('user_no', user_no)
+        except jwt.ExpiredSignatureError:
+            return failed_response(ServiceStatus.CODE_401, msg='令牌已失效')
+        except jwt.InvalidTokenError:
+            return failed_response(ServiceStatus.CODE_401, msg='无效的令牌')
+        except Exception:
+            logger.bind(traceid=g.trace_id).exception()
+            return failed_response(ServiceStatus.CODE_500)
+
+        # 获取权限代码
+        code = inspect.signature(func).parameters.get('CODE').default
+        # 查询令牌
+        token = TOpenAccessToken.filter_by(TOKEN_NO=token_no).first()  # type: TOpenAccessToken
+        # 查询权限
+        stmt = (
+            select(
+                TPermission.PERMISSION_CODE
+            )
+            .where(
+                and_(
+                    TPermission.PERMISSION_CODE == code,
+                    or_(*[TPermission.PERMISSION_NO == number for number in token.PERMISSIONS])
+                )
+            )
         )
-        # 应用不存在
-        if not tpa:
-            logger.bind(traceid=g.trace_id).info('应用不存在')
-            return failed_response(ServiceStatus.CODE_403)
-        # 应用状态异常
-        if tpa.STATE != 'ENABLE':
-            logger.bind(traceid=g.trace_id).info('应用状态异常')
-            return failed_response(ServiceStatus.CODE_405)
-        # 存储appno
-        localvars.set('tp_app_no', appno)
-        return func(*args, **kwargs)
+        # 令牌有权限则返回响应
+        if db.session.execute(stmt).first():
+            localvars.set('external_invoke', True)
+            return func(*args, **kwargs)
+
+        # 其余情况校验不通过
+        logger.bind(traceid=g.trace_id).info(f'method:[ {request.method} ] path:[ {request.path} ] 令牌无此权限')
+        return failed_response(ServiceStatus.CODE_403)
 
     return wrapper
+
 
 
 def failed_response(error: ServiceStatus, msg=None):

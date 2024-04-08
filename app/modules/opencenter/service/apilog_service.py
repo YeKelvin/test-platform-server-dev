@@ -4,7 +4,7 @@
 # @Author  : Kelvin.Ye
 from app.database import db_query
 from app.modules.opencenter.model import TOpenApiLog
-from app.modules.opencenter.model import TThirdPartyApplication
+from app.modules.opencenter.model import TOpenApplication
 from app.tools.service import http_service
 from app.utils.sqlalchemy_util import QueryCondition
 from app.utils.time_util import TIMEFMT
@@ -13,8 +13,8 @@ from app.utils.time_util import TIMEFMT
 @http_service
 def query_openapi_log_list(req):
         # 查询条件
-    conds = QueryCondition(TOpenApiLog, TThirdPartyApplication)
-    conds.like(TThirdPartyApplication.APP_NAME, req.appName)
+    conds = QueryCondition(TOpenApiLog, TOpenApplication)
+    conds.like(TOpenApplication.APP_NAME, req.appName)
     conds.like(TOpenApiLog.METHOD, req.method)
     conds.like(TOpenApiLog.URI, req.path)
     conds.like(TOpenApiLog.REQUEST, req.request)
@@ -22,12 +22,12 @@ def query_openapi_log_list(req):
     conds.equal(TOpenApiLog.SUCCESS, req.success)
     conds.ge(TOpenApiLog.CREATED_TIME, req.startTime)
     conds.le(TOpenApiLog.CREATED_TIME, req.endTime)
-    conds.equal(TOpenApiLog.APP_NO, TThirdPartyApplication.APP_NO)
+    conds.equal(TOpenApiLog.APP_NO, TOpenApplication.APP_NO)
 
     # 查询日志列表
     pagination = (
         db_query(
-            TThirdPartyApplication.APP_NAME,
+            TOpenApplication.APP_NAME,
             TOpenApiLog.LOG_NO,
             TOpenApiLog.DESC,
             TOpenApiLog.IP,
