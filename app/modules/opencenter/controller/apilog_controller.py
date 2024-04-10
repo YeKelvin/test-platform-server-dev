@@ -16,7 +16,6 @@ from app.tools.require import require_permission
 def query_openapi_log_list(CODE='QUERY_OPENAPI_LOG'):
     """分页查询OpenAPI日志列表"""
     req = JsonParser(
-        Argument('appName'),
         Argument('method'),
         Argument('path'),
         Argument('request'),
@@ -24,6 +23,7 @@ def query_openapi_log_list(CODE='QUERY_OPENAPI_LOG'):
         Argument('success'),
         Argument('startTime'),
         Argument('endTime'),
+        Argument('invokeBy'),
         Argument('page', type=int, required=True, nullable=False, help='页数不能为空'),
         Argument('pageSize', type=int, required=True, nullable=False, help='每页总数不能为空'),
     ).parse()

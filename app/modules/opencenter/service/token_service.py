@@ -89,7 +89,7 @@ def create_app_token(req):
         TOKEN_NAME=req.tokenName,
         TOKEN_DESC=req.tokenDesc,
         TOKEN_OWNER=req.appNo,
-        EXPIRE_TIME=req.expireTime,
+        EXPIRE_TIME=req.expireTime or None,
         WORKSPACES=req.workspaces,
         PERMISSIONS=req.permissions
     )
@@ -114,7 +114,7 @@ def create_user_token(req):
         TOKEN_NAME=req.tokenName,
         TOKEN_DESC=req.tokenDesc,
         TOKEN_OWNER=req.userNo,
-        PEXPIRE_TIME=req.expireTime,
+        PEXPIRE_TIME=req.expireTime or None,
         WORKSPACES=req.workspaces,
         PERMISSIONS=req.permissions
     )
