@@ -43,7 +43,8 @@ def create_app_token(CODE='CREATE_ACCESS_TOKEN'):
         Argument('tokenName', required=True, nullable=False, help='令牌名称不能为空'),
         Argument('tokenDesc'),
         Argument('expireTime'),
-        Argument('permissions', type=list, required=True, nullable=False, help='权限列表不能为空'),
+        Argument('workspaces', type=list, default=[]),
+        Argument('permissions', type=list, required=True, nullable=False, help='权限列表不能为空')
     ).parse()
     return service.create_app_token(req)
 
@@ -58,7 +59,8 @@ def create_user_token(CODE='CREATE_ACCESS_TOKEN'):
         Argument('tokenName', required=True, nullable=False, help='令牌名称不能为空'),
         Argument('tokenDesc'),
         Argument('expireTime'),
-        Argument('permissions', type=list, required=True, nullable=False, help='权限列表不能为空'),
+        Argument('workspaces', type=list, default=[]),
+        Argument('permissions', type=list, required=True, nullable=False, help='权限列表不能为空')
     ).parse()
     return service.create_user_token(req)
 
@@ -72,6 +74,7 @@ def modify_token(CODE='MODIFY_ACCESS_TOKEN'):
         Argument('tokenNo', required=True, nullable=False, help='令牌编号不能为空'),
         Argument('tokenName', required=True, nullable=False, help='令牌名称不能为空'),
         Argument('tokenDesc'),
+        Argument('workspaces', type=list, default=[]),
         Argument('permissions', type=list, required=True, nullable=False, help='权限列表不能为空'),
     ).parse()
     return service.modify_token(req)

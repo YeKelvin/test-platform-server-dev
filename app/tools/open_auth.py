@@ -30,8 +30,9 @@ def decode_access_token(token) -> dict:
     """反序列token"""
     # 解码token
     payload = jwt_decode(token, CONFIG.JWT_SECRET_KEY, options=None)
-    # 校验有效期
+    # 获取失效时间
     exp = payload.get('expire_time')
-    if exp and int(exp) < int(time.time()):
+    # 判断是否过期
+    if exp and int(exp) < int(time.time()) * 1000:
         raise jwt.ExpiredSignatureError
     return payload

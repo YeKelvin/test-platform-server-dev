@@ -16,10 +16,10 @@ from app.utils.sqlalchemy_util import QueryCondition
 @http_service
 def query_permission_all(req):
     conds = QueryCondition()
-    conds.in_(TModule.MODULE_CODE, req.moduleCodes)
-    conds.in_(TObject.OBJECT_CODE, req.objectCodes)
-    conds.in_(TPermission.PERMISSION_ACT, req.actIncludes)
-    conds.notin_(TPermission.PERMISSION_ACT, req.actExcludes)
+    conds.include(TModule.MODULE_CODE, req.moduleCodes)
+    conds.include(TObject.OBJECT_CODE, req.objectCodes)
+    conds.include(TPermission.PERMISSION_ACT, req.actIncludes)
+    conds.exclude(TPermission.PERMISSION_ACT, req.actExcludes)
     stmt = (
         select(
             TModule.MODULE_NO,

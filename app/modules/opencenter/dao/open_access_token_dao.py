@@ -8,3 +8,6 @@ from app.modules.opencenter.model import TOpenAccessToken
 
 def select_by_no(token_no) -> TOpenAccessToken:
     return TOpenAccessToken.filter_by(TOKEN_NO=token_no).first()
+
+def exists_by_name(owner, token_name) -> bool:
+    return bool(TOpenAccessToken.filter_by(TOKEN_OWNER=owner, TOKEN_NAME=token_name).first())

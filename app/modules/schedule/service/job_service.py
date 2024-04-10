@@ -6,7 +6,6 @@ from apscheduler.jobstores.base import JobLookupError
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.date import DateTrigger
 from apscheduler.util import convert_to_datetime
-from flask import request
 from loguru import logger
 from tzlocal import get_localzone
 
@@ -190,7 +189,7 @@ def create_job(req):
 @http_service
 def modify_job(req):
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
 
     # 查询定时任务
     job = schedule_job_dao.select_by_no(req.jobNo)
@@ -260,7 +259,7 @@ def modify_job(req):
 @http_service
 def pause_job(req):
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
     # 查询定时任务
     job = schedule_job_dao.select_by_no(req.jobNo)
     check_exists(job, error='任务不存在')
@@ -281,7 +280,7 @@ def pause_job(req):
 @http_service
 def resume_job(req):
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
     # 查询定时任务
     job = schedule_job_dao.select_by_no(req.jobNo)
     check_exists(job, error='任务不存在')
@@ -302,7 +301,7 @@ def resume_job(req):
 @http_service
 def remove_job(req):
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
 
     # 查询定时任务
     job = schedule_job_dao.select_by_no(req.jobNo)

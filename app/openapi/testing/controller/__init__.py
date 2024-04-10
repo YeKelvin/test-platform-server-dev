@@ -9,4 +9,5 @@ from flask import Blueprint
 blueprint = Blueprint('testing', __name__, url_prefix='/testing')
 
 
-from . import testplan_controller  # noqa
+from . import execution_controller  # noqa
+from . import testplan_controller   # noqa

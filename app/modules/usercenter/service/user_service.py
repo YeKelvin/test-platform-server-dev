@@ -362,7 +362,7 @@ def query_user_list(req):
     conds.add(TUser.DELETED == 0)
     conds.add(or_(TUserLoginInfo.DELETED == 0, TUserLoginInfo.DELETED.is_(None)))
     conds.add(or_(TUserLoginInfo.LOGIN_TYPE == 'ACCOUNT', TUserLoginInfo.LOGIN_TYPE.is_(None)))
-    conds.notequal(TUser.USER_NO, '9999')
+    conds.unequal(TUser.USER_NO, '9999')
     conds.like(TUser.USER_NO, req.userNo)
     conds.like(TUser.USER_NAME, req.userName)
     conds.like(TUser.MOBILE, req.mobile)
@@ -434,7 +434,7 @@ def query_user_all():
     conds.add(TUser.DELETED == 0)
     conds.add(or_(TUserLoginInfo.DELETED == 0, TUserLoginInfo.DELETED.is_(None)))
     conds.add(or_(TUserLoginInfo.LOGIN_TYPE == 'ACCOUNT', TUserLoginInfo.LOGIN_TYPE.is_(None)))
-    conds.notequal(TUser.USER_NO, '9999')
+    conds.unequal(TUser.USER_NO, '9999')
 
     # 查询用户列表
     users = (

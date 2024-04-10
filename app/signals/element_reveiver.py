@@ -106,12 +106,11 @@ def get_element_node(element_no):
     nodes[element_no] = entity
     return entity
 
-def get_root_no(element_no):
+def get_root_no(element_no):  # sourcery skip: assign-if-exp
     """获取根元素编号"""
     root_no = localvar__root_no.get()
     if root_no == 0:
-        node = get_element_node(element_no)
-        if node:
+        if node := get_element_node(element_no):
             if node.ROOT_NO == ElementType.WORKSPACE.value:
                 root_no = None # 空间组件没有根元素
             else:
@@ -189,7 +188,7 @@ def record_create_element(sender, root_no, parent_no, element_no):
         CASE_NO=get_case_no(parent_no) if parent_no else None,
         PARENT_NO=parent_no,
         ELEMENT_NO=element_no,
-        OPERATION_BY=localvars.get_user_no(),
+        OPERATION_BY=localvars.get_user_no() or localvars.get_app_no(),
         OPERATION_TIME=datetime_now_by_utc8(),
         OPERATION_TYPE=ElementOperationType.INSERT.value
     )
@@ -207,7 +206,7 @@ def record_modify_element(sender, element_no, prop_name=None, attr_name=None, ol
         ATTR_NAME=attr_name,
         OLD_VALUE=old_value,
         NEW_VALUE=new_value,
-        OPERATION_BY=localvars.get_user_no(),
+        OPERATION_BY=localvars.get_user_no() or localvars.get_app_no(),
         OPERATION_TIME=datetime_now_by_utc8(),
         OPERATION_TYPE=ElementOperationType.UPDATE.value
     )
@@ -221,7 +220,7 @@ def record_remove_element(sender, element_no):
         CASE_NO=get_case_no(element_no),
         PARENT_NO=get_parent_no(element_no),
         ELEMENT_NO=element_no,
-        OPERATION_BY=localvars.get_user_no(),
+        OPERATION_BY=localvars.get_user_no() or localvars.get_app_no(),
         OPERATION_TIME=datetime_now_by_utc8(),
         OPERATION_TYPE=ElementOperationType.DELETE.value
     )
@@ -242,7 +241,7 @@ def record_move_element(sender, element_no, source_no, source_index, target_no, 
         TARGET_NO=target_no,
         SOURCE_INDEX=source_index,
         TARGET_INDEX=target_index,
-        OPERATION_BY=localvars.get_user_no(),
+        OPERATION_BY=localvars.get_user_no() or localvars.get_app_no(),
         OPERATION_TIME=datetime_now_by_utc8(),
         OPERATION_TYPE=ElementOperationType.MOVE.value
     )
@@ -259,7 +258,7 @@ def record_order_element(sender, element_no, source_index, target_index):
         ELEMENT_NO=element_no,
         SOURCE_INDEX=source_index,
         TARGET_INDEX=target_index,
-        OPERATION_BY=localvars.get_user_no(),
+        OPERATION_BY=localvars.get_user_no() or localvars.get_app_no(),
         OPERATION_TIME=datetime_now_by_utc8(),
         OPERATION_TYPE=ElementOperationType.ORDER.value
     )
@@ -274,7 +273,7 @@ def record_copy_element(sender, element_no, source_no):
         PARENT_NO=get_parent_no(element_no),
         ELEMENT_NO=element_no,
         SOURCE_NO=source_no,
-        OPERATION_BY=localvars.get_user_no(),
+        OPERATION_BY=localvars.get_user_no() or localvars.get_app_no(),
         OPERATION_TIME=datetime_now_by_utc8(),
         OPERATION_TYPE=ElementOperationType.COPY.value
     )
@@ -288,7 +287,7 @@ def record_transfer_element(sender, collection_no, source_workspace_no, target_w
         ELEMENT_NO=collection_no,
         SOURCE_NO=source_workspace_no,
         TARGET_NO=target_workspace_no,
-        OPERATION_BY=localvars.get_user_no(),
+        OPERATION_BY=localvars.get_user_no() or localvars.get_app_no(),
         OPERATION_TIME=datetime_now_by_utc8(),
         OPERATION_TYPE=ElementOperationType.TRANSFER.value
     )

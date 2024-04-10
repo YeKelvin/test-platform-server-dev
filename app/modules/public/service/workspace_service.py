@@ -58,14 +58,28 @@ def query_workspace_list(req):
 @http_service
 def query_workspace_all(req):
     if not req.userNo:
-        workspaces = TWorkspace.filter_by().order_by(TWorkspace.CREATED_TIME.desc()).all()
+        conds = QueryCondition()
+        conds.include(TWorkspace.WORKSPACE_SCOPE, req.scopes)
+        print(f'{req.scopes=}')
+        print(f'{conds=}')
+        workspaces = (
+            TWorkspace
+            .filter(*conds)
+            .order_by(TWorkspace.WORKSPACE_SCOPE.asc(), TWorkspace.CREATED_TIME.desc())
+            .all()
+        )  # type: list[TWorkspace]
     else:
         # 查询条件
         conds = QueryCondition(TWorkspace, TWorkspaceUser)
+        conds.include(TWorkspace.WORKSPACE_SCOPE, req.scopes)
         conds.equal(TWorkspaceUser.WORKSPACE_NO, TWorkspace.WORKSPACE_NO)
         conds.equal(TWorkspaceUser.USER_NO, req.userNo)
         # 查询团队和个人空间
-        workspace_stmt = TWorkspace.filter(*conds).order_by(TWorkspace.CREATED_TIME.desc())
+        workspace_stmt = (
+            TWorkspace
+            .filter(*conds)
+            .order_by(TWorkspace.WORKSPACE_SCOPE.asc(), TWorkspace.CREATED_TIME.desc())
+        )
         # 查询公共空间
         public_workspace_stmt = (
             TWorkspace
@@ -73,7 +87,7 @@ def query_workspace_all(req):
             .order_by(TWorkspace.CREATED_TIME.desc())
         )
         # 连表查询
-        workspaces = workspace_stmt.union(public_workspace_stmt).all()
+        workspaces = workspace_stmt.union(public_workspace_stmt).all()  # type: list[TWorkspace]
 
     return [
         {

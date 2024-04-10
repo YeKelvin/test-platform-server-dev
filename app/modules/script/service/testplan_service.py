@@ -84,7 +84,7 @@ def query_testplan_list(req):
 def query_testplan_all(req):
     conds = QueryCondition()
     conds.equal(TTestplan.WORKSPACE_NO, req.workspaceNo)
-    conds.in_(TTestplan.PLAN_STATE, req.stateList)
+    conds.include(TTestplan.PLAN_STATE, req.stateList)
     testplans = TTestplan.filter(*conds).order_by(TTestplan.CREATED_TIME.desc()).all()
 
     return [

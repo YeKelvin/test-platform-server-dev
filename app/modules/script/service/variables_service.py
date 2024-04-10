@@ -2,7 +2,6 @@
 # @File    : variables_service.py
 # @Time    : 2020/3/13 16:59
 # @Author  : Kelvin.Ye
-from flask import request
 from sqlalchemy import and_
 
 from app.modules.script.dao import variable_dao
@@ -113,7 +112,7 @@ def create_dataset(req):
 @http_service
 def modify_dataset(req):
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
 
     # 查询变量集信息
     dataset = variable_dataset_dao.select_by_no(req.datasetNo)
@@ -130,7 +129,7 @@ def modify_dataset(req):
 @http_service
 def remove_dataset(req):
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
     # 查询变量集信息
     dataset = variable_dataset_dao.select_by_no(req.datasetNo)
     check_exists(dataset, error='变量集不存在')
@@ -143,7 +142,7 @@ def remove_dataset(req):
 @http_service
 def create_variable(req):
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
 
     # 查询变量信息
     variable = variable_dao.select_by_dataset_and_name(req.datasetNo, req.variableName)
@@ -171,7 +170,7 @@ def create_variable(req):
 @http_service
 def modify_variable(req):
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
 
     # 查询变量信息
     variable = variable_dao.select_by_no(req.variableNo)
@@ -193,7 +192,7 @@ def modify_variable(req):
 @http_service
 def remove_variable(req):
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
 
     # 查询变量信息
     variable = variable_dao.select_by_no(req.variableNo)
@@ -210,7 +209,7 @@ def remove_variable(req):
 @http_service
 def enable_variable(req):
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
 
     # 查询变量信息
     variable = variable_dao.select_by_no(req.variableNo)
@@ -227,7 +226,7 @@ def enable_variable(req):
 @http_service
 def disable_variable(req):
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
 
     # 查询变量信息
     variable = variable_dao.select_by_no(req.variableNo)
@@ -244,7 +243,7 @@ def disable_variable(req):
 @http_service
 def update_current_value(req):
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
 
     # 查询变量信息
     variable = variable_dao.select_by_no(req.variableNo)
@@ -307,7 +306,7 @@ def query_variables(req):
 @http_service
 def create_variables(req):
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
 
     # 查询变量集信息
     dataset = variable_dataset_dao.select_by_no(req.datasetNo)
@@ -337,7 +336,7 @@ def create_variables(req):
 @http_service
 def modify_variables(req):
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
     # 查询变量集信息
     dataset = variable_dataset_dao.select_by_no(req.datasetNo)
     check_exists(dataset, error='变量集不存在')
@@ -378,7 +377,7 @@ def modify_variables(req):
 @http_service
 def remove_variables(req):
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
     # 查询变量集信息
     dataset = variable_dataset_dao.select_by_no(req.datasetNo)
     check_exists(dataset, error='变量集不存在')
@@ -389,7 +388,7 @@ def remove_variables(req):
 @http_service
 def duplicate_dataset(req):
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
 
     # 查询变量集
     dataset = variable_dataset_dao.select_by_no(req.datasetNo)
@@ -425,7 +424,7 @@ def duplicate_dataset(req):
 @http_service
 def copy_dataset_to_workspace(req):
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
 
     # 查询变量集
     dataset = variable_dataset_dao.select_by_no(req.datasetNo)

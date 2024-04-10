@@ -26,6 +26,7 @@ class TOpenAccessToken(TableModel, BaseColumn):
     TOKEN_NAME = db.Column(db.String(32), index=True, nullable=False, comment='令牌名称')
     TOKEN_DESC = db.Column(db.String(32), index=True, nullable=False, comment='令牌描述')
     TOKEN_OWNER = db.Column(db.String(32), index=True, nullable=False, comment='令牌持有人')
+    WORKSPACES = db.Column(JSONB, index=True, nullable=False, comment='空间列表')
     PERMISSIONS = db.Column(JSONB, index=True, nullable=False, comment='权限列表')
     EXPIRE_TIME = db.Column(db.DateTime(), comment='失效时间')
     LAST_USED_TIME = db.Column(db.DateTime(), comment='最后使用时间')
@@ -35,7 +36,8 @@ class TOpenApiLog(TableModel, BaseColumn):
     """OpenAPI日志表"""
     __tablename__ = 'OPEN_API_LOG'
     LOG_NO = db.Column(db.String(32), index=True, unique=True, nullable=False, comment='日志编号')
-    APP_NO = db.Column(db.String(32), index=True, nullable=False, comment='应用编号')
+    APP_NO = db.Column(db.String(32), index=True, comment='应用编号')
+    USER_NO = db.Column(db.String(32), index=True, comment='用户编号')
     DESC = db.Column(db.String(256), comment='请求描述')
     IP = db.Column(db.String(32), comment='请求IP')
     URI = db.Column(db.String(256), comment='请求路径')

@@ -20,6 +20,10 @@ def get_trace_id():
     return traceid
 
 
+def get_app_no():
+    return getattr(g, 'app_no', None)
+
+
 def get_user_no():
     return getattr(g, 'user_no', None)
 

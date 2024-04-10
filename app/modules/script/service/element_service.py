@@ -23,7 +23,7 @@ from app.modules.script.enum import is_snippet
 from app.modules.script.enum import is_timer
 from app.modules.script.enum import is_worker
 from app.modules.script.manager.element_manager import get_root_no
-from app.modules.script.manager.element_manager import get_workspace_no
+from app.modules.script.manager.element_manager import get_workspace_no_by_root
 from app.modules.script.model import TElementChildren
 from app.modules.script.model import TElementComponent
 from app.modules.script.model import TElementProperty
@@ -41,6 +41,7 @@ from app.tools.identity import new_id
 from app.tools.service import http_service
 from app.tools.validator import check_exists
 from app.tools.validator import check_workspace_permission
+from app.tools.validator import get_workspace_no_by_request
 from app.utils.json_util import from_json
 from app.utils.json_util import to_json
 from app.utils.sqlalchemy_util import QueryCondition
@@ -62,7 +63,7 @@ def query_element_list(req):
         conds.like(TTestElement.WORKSPACE_NO, req.workspaceNo)
 
     if req.workspaceName:
-        conds.add_table(TWorkspace)
+        conds.join(TWorkspace)
         conds.like(TWorkspace.WORKSPACE_NAME, req.workspaceName)
         conds.equal(TTestElement.WORKSPACE_NO, TWorkspace.WORKSPACE_NO)
 
@@ -285,7 +286,7 @@ def create_element(req: TypedElement):
     workspace_no = None
     if req.elementType in [ElementType.COLLECTION.value, ElementType.SNIPPET.value, ElementType.CONFIG.value]:
         # 获取空间编号
-        workspace_no = request.headers.get('x-workspace-no')
+        workspace_no = get_workspace_no_by_request()
         # 校验工作空间
         workspace = workspace_dao.select_by_no(workspace_no)
         check_exists(workspace, error='工作空间不存在')
@@ -320,7 +321,7 @@ def create_element(req: TypedElement):
 @http_service
 def create_element_child(req):
     # 校验空间权限
-    check_workspace_permission(get_workspace_no(req.rootNo))
+    check_workspace_permission()
     # 新增元素
     element_no = add_element(
         element_name=req.elementName,
@@ -391,8 +392,7 @@ def add_element_node(root_no, parent_no, element_no):
 @http_service
 def modify_element(req):
     # 校验空间权限
-    # TODO: 空间校验改造成装饰器
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
     # 更新元素
     update_element(
         element_no=req.elementNo,
@@ -474,7 +474,7 @@ def record_element_changelog(element: TTestElement, new_name: str, new_desc: str
 @http_service
 def remove_element(req):
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
     # 删除元素
     return delete_element(req.elementNo)
 
@@ -548,7 +548,7 @@ def enable_element(req):
     check_exists(element, error='元素不存在')
 
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
 
     # 更新元素状态为启用，移除跳过标记
     element.update(
@@ -564,7 +564,7 @@ def disable_element(req):
     check_exists(element, error='元素不存在')
 
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
 
     # 更新元素状态为禁用
     element.update(
@@ -580,7 +580,7 @@ def skip_element(req):
     check_exists(element, error='元素不存在')
 
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
 
     # 标记元素状态为跳过
     element.update(
@@ -595,9 +595,13 @@ def toggle_element_state(req):
     element = test_element_dao.select_by_no(req.elementNo)
     check_exists(element, error='元素不存在')
     # 校验空间权限
-    check_workspace_permission(get_workspace_no(get_root_no(req.elementNo)))
+    check_workspace_permission()
     # 更新元素状态
-    state = ElementStatus.DISABLE.value if element.ENABLED == ElementStatus.ENABLE.value else ElementStatus.ENABLE.value
+    state = (
+        ElementStatus.DISABLE.value
+        if element.ENABLED == ElementStatus.ENABLE.value
+        else ElementStatus.ENABLE.value
+    )
     element.update(ENABLED=state)
 
 
@@ -688,7 +692,7 @@ def move_element(req):
     # 父元素不变时，仅重新排序 source 同级元素
     if source_parent_no == req.targetParentNo:
         # 校验空间权限
-        check_workspace_permission(get_workspace_no(get_root_no(req.sourceNo)))
+        check_workspace_permission()
         # 序号相等时直接跳过
         if req.targetIndex == source_node.ELEMENT_SORT:
             return
@@ -731,7 +735,7 @@ def move_element(req):
     # source 元素移动至不同的父元素下
     else:
         # 校验空间权限
-        check_workspace_permission(get_workspace_no(req.targetRootNo))
+        check_workspace_permission(get_workspace_no_by_root(req.targetRootNo))
         # source 元素下方的同级元素序号 - 1（上移元素）
         (
             TElementChildren
@@ -802,7 +806,7 @@ def duplicate_element(req):
     check_exists(source, error='元素不存在')
 
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
 
     # 排除不支持复制的元素
     if source.ELEMENT_TYPE == ElementType.COLLECTION.value:
@@ -839,7 +843,7 @@ def duplicate_element(req):
 @http_service
 def paste_element(req):
     # 校验空间权限
-    check_workspace_permission(get_workspace_no(get_root_no(req.targetNo)))
+    check_workspace_permission(get_workspace_no_by_root(get_root_no(req.targetNo)))
 
     # 查询 source 元素
     source = test_element_dao.select_by_no(req.sourceNo)

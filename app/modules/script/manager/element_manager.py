@@ -21,7 +21,7 @@ TParentElement: TTestElement = aliased(TTestElement)
 TChildElement: TTestElement = aliased(TTestElement)
 
 
-def get_workspace_no(root_no) -> str:
+def get_workspace_no_by_root(root_no) -> str:
     """获取元素空间编号"""
     root = test_element_dao.get_root_by_number(root_no)
     if not root:

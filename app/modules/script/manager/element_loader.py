@@ -33,7 +33,7 @@ from app.modules.script.manager.element_component import create_transaction_http
 from app.modules.script.manager.element_component import create_transaction_parameter
 from app.modules.script.manager.element_manager import get_element_children_node
 from app.modules.script.manager.element_manager import get_element_property
-from app.modules.script.manager.element_manager import get_workspace_no
+from app.modules.script.manager.element_manager import get_workspace_no_by_root
 from app.modules.script.model import TElementComponent
 from app.modules.script.model import TTestElement
 from app.tools.exceptions import ServiceError
@@ -304,7 +304,7 @@ class ElementLoader:
         # 根元素对象
         self.root_element = self.get_root_element()
         # 根元素所在的空间编号
-        self.workspace_no = get_workspace_no(root_no)
+        self.workspace_no = get_workspace_no_by_root(root_no)
         # 空间元素对象
         self.workspace_element:TTestElement = None
         # 指定的用例对象

@@ -18,6 +18,7 @@ from sqlalchemy import select
 
 from app.extension import db
 from app.modules.opencenter.model import TOpenAccessToken
+from app.modules.opencenter.model import TOpenApplication
 from app.modules.usercenter.model import TGroup
 from app.modules.usercenter.model import TGroupMember
 from app.modules.usercenter.model import TGroupRole
@@ -30,8 +31,10 @@ from app.modules.usercenter.model import TUserRole
 from app.tools import localvars
 from app.tools.auth import JWTAuth
 from app.tools.exceptions import ServiceStatus
+from app.tools.open_auth import decode_access_token
 from app.tools.response import ResponseDTO
 from app.tools.response import http_response
+from app.utils.time_util import datetime_now
 
 
 def require_login(func):
@@ -130,24 +133,35 @@ def require_open_permission(func):
         # 校验access-token
         if 'access-token' not in request.headers:
             # 缺失请求头
-            return failed_response(ServiceStatus.CODE_401, msg='缺失令牌')
+            return failed_response(ServiceStatus.CODE_403, msg='缺失令牌')
         try:
             # 解析token，获取payload
-            payload = JWTAuth.decode_token(request.headers['access-token'])
+            payload = decode_access_token(request.headers['access-token'])
             app_no = payload.get('app_no')
             user_no = payload.get('user_no')
             token_no = payload.get('token_no')
-            # 存储应用编号
-            app_no and localvars.set('app_no', app_no)
-            # 存储用户编号
-            user_no and localvars.set('user_no', user_no)
+            # 存储令牌编号
+            localvars.set('token_no', token_no)
         except jwt.ExpiredSignatureError:
-            return failed_response(ServiceStatus.CODE_401, msg='令牌已失效')
+            return failed_response(ServiceStatus.CODE_403, msg='令牌已失效')
         except jwt.InvalidTokenError:
-            return failed_response(ServiceStatus.CODE_401, msg='无效的令牌')
+            return failed_response(ServiceStatus.CODE_403, msg='无效的令牌')
         except Exception:
-            logger.bind(traceid=g.trace_id).exception()
+            logger.bind(traceid=g.trace_id).exception('')
             return failed_response(ServiceStatus.CODE_500)
+
+        # 校验应用状态
+        if app_no:
+            localvars.set('app_no', app_no)  # 存储应用编号
+            openapp = TOpenApplication.filter_by(APP_NO=app_no).first()  # type: TOpenApplication
+            if openapp.STATE != 'ENABLE':
+                return failed_response(ServiceStatus.CODE_405, msg='应用状态异常')
+        # 校验用户状态
+        if user_no:
+            localvars.set('user_no', user_no)  # 存储用户编号
+            user = TUser.filter_by(USER_NO=user_no).first()  # type: TUser
+            if user.STATE != 'ENABLE':
+                return failed_response(ServiceStatus.CODE_405, msg='用户状态异常')
 
         # 获取权限代码
         code = inspect.signature(func).parameters.get('CODE').default
@@ -167,7 +181,13 @@ def require_open_permission(func):
         )
         # 令牌有权限则返回响应
         if db.session.execute(stmt).first():
+            # 标记为外部调用
             localvars.set('external_invoke', True)
+            # 记录最后使用时间
+            token.update(LAST_USED_TIME=datetime_now())
+            # 实时更新
+            db.session.commit()
+            # 调用服务
             return func(*args, **kwargs)
 
         # 其余情况校验不通过

@@ -3,7 +3,6 @@
 # @Time    : 2020/1/6 17:07
 # @Author  : Kelvin.Ye
 from loguru import logger
-from sqlalchemy import or_
 from sqlalchemy.dialects import postgresql
 
 
@@ -18,11 +17,13 @@ class QueryCondition(list):
     def __init__(self, *agrs):
         super().__init__()
         for arg in agrs:
-            self.add_table(arg)
+            self.join(arg)
 
-    def add_table(self, table):
+    def join(self, table, condition=None):
         if table:
             self.append(table.DELETED == 0)
+        if condition:
+            self.append(condition)
 
     def add(self, condition):
         self.append(condition)
@@ -37,8 +38,8 @@ class QueryCondition(list):
         if value:
             self.append(column == value)
 
-    def notequal(self, column, value):
-        """完全匹配"""
+    def unequal(self, column, value):
+        """不相等"""
         if value:
             self.append(column != value)
 
@@ -62,16 +63,15 @@ class QueryCondition(list):
         if value:
             self.append(column >= value)
 
-    def in_(self, column, *args):
+    def include(self, column, *args):
+        """包含（in）"""
         if args := [arg for arg in args if arg]:
             self.append(column.in_(*args))
 
-    def notin_(self, column, *args):
+    def exclude(self, column, *args):
+        """排除（not in）"""
         if args := [arg for arg in args if arg]:
             self.append(column.notin_(*args))
-
-    def or_(self, *args):
-        self.append(or_(*args))
 
 
 def show_statement(stmt):

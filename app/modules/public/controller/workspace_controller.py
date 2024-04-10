@@ -32,7 +32,8 @@ def query_workspace_list(CODE='QUERY_WORKSPACE'):
 def query_workspace_all(CODE='QUERY_WORKSPACE'):
     """查询全部工作空间"""
     req = JsonParser(
-        Argument('userNo')
+        Argument('userNo'),
+        Argument('scopes', type=list)
     ).parse()
     return service.query_workspace_all(req)
 

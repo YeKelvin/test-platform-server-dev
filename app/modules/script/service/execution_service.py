@@ -4,7 +4,6 @@
 # @Author  : Kelvin.Ye
 import time
 
-from flask import request
 from gevent.event import Event
 from loguru import logger
 from pymeter.runner import Runner as PyMeterRunner
@@ -36,8 +35,6 @@ from app.modules.script.manager.element_component import add_variable_dataset
 from app.modules.script.manager.element_loader import ElementLoader
 from app.modules.script.manager.element_manager import get_case_no
 from app.modules.script.manager.element_manager import get_element_node
-from app.modules.script.manager.element_manager import get_root_no
-from app.modules.script.manager.element_manager import get_workspace_no
 from app.modules.script.model import TTestplanExecution
 from app.modules.script.model import TTestplanExecutionCollection
 from app.modules.script.model import TTestReport
@@ -118,7 +115,7 @@ def debug_pymeter_by_loader(loader, app, socket_id):
 @http_service
 def run_collection(req):
     # 校验空间权限
-    check_workspace_permission(get_workspace_no(get_root_no(req.collectionNo)))
+    check_workspace_permission()
 
     # 查询元素
     collection = test_element_dao.select_by_no(req.collectionNo)
@@ -164,7 +161,7 @@ def run_collection(req):
 @http_service
 def run_worker(req):
     # 校验空间权限
-    check_workspace_permission(get_workspace_no(get_root_no(req.workerNo)))
+    check_workspace_permission()
     # 异步运行脚本
     run_testcase(
         worker_no=req.workerNo,
@@ -179,7 +176,7 @@ def run_worker(req):
 @http_service
 def run_worker_by_sampler(req):
     # 校验空间权限
-    check_workspace_permission(get_workspace_no(get_root_no(req.samplerNo)))
+    check_workspace_permission()
     # 获取用例编号
     worker_no = get_case_no(req.samplerNo)
     # 异步运行脚本
@@ -244,7 +241,7 @@ def run_testcase(worker_no, socket_id, offlines, datasets, variables, use_curren
 @http_service
 def run_sampler(req):
     # 校验空间权限
-    check_workspace_permission(get_workspace_no(get_root_no(req.samplerNo)))
+    check_workspace_permission()
 
     # 查询元素
     sampler = test_element_dao.select_by_no(req.samplerNo)
@@ -306,7 +303,7 @@ def run_sampler(req):
 @http_service
 def run_snippet(req):
     # 校验空间权限
-    check_workspace_permission(get_workspace_no(get_root_no(req.snippetNo)))
+    check_workspace_permission()
 
     # 查询元素
     snippet = test_element_dao.select_by_no(req.snippetNo)
@@ -343,7 +340,7 @@ def run_snippet(req):
 @http_service
 def run_offline(req):
     # 校验空间权限
-    check_workspace_permission(request.headers.get('x-workspace-no'))
+    check_workspace_permission()
 
     # 获取离线数据
     offline = req.offlines.get(req.offlineNo)

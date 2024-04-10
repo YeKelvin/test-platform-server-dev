@@ -82,6 +82,10 @@ def sleep(secs: float) -> None:
     time.sleep(secs)
 
 
+def datetime_now(offset=8) -> datetime:
+    return datetime.now(timezone(timedelta(hours=offset)))
+
+
 def datetime_now_by_utc8() -> datetime:
     return datetime.now(timezone(timedelta(hours=8)))
 

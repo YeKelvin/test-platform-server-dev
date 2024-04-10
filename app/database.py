@@ -102,7 +102,7 @@ class CRUDMixin:
                 entity.update(**values)
         else:
             cls.filter(*where).update({getattr(cls, attr): value for attr, value in values.items()})
-        db.session.flush()
+            db.session.flush()
 
     @classmethod
     def updates_by(cls: type[T], values: dict, where: dict, record=True):
@@ -117,7 +117,7 @@ class CRUDMixin:
                 entity.update(**values)
         else:
             cls.filter_by(**where).update({getattr(cls, attr): value for attr, value in values.items()})
-        db.session.flush()
+            db.session.flush()
 
     @classmethod
     def norecord_updates_by(cls: type[T], values: dict, where: dict):
@@ -133,7 +133,7 @@ class CRUDMixin:
                 entity.delete()
         else:
             cls.filter(*args).update({cls.DELETED: cls.ID})
-        db.session.flush()
+            db.session.flush()
 
     @classmethod
     def deletes_by(cls: type[T], **kwargs):
@@ -144,7 +144,7 @@ class CRUDMixin:
                 entity.delete()
         else:
             cls.filter_by(**kwargs).update({cls.DELETED: cls.ID})
-        db.session.flush()
+            db.session.flush()
 
     def update(self, **kwargs):
         """更新"""
@@ -164,9 +164,10 @@ class CRUDMixin:
         record and record_delete_signal.send(entity=self)
         if not physical:
             setattr(self, 'DELETED', self.ID)
+            self.submit()
         else:
             db.session.delete(self)
-        db.session.flush()
+            db.session.flush()
 
     def norecord_delete(self, physical=False):
         """无记录删除"""

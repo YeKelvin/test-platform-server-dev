@@ -203,7 +203,7 @@ def init_openapi(app: Flask):
         func = unwrap(app.view_functions[api.endpoint])
         endpoint = f'open__{func.__name__}'
         blueprint.add_url_rule(
-            rule=api.rule,
+            rule=api.rule.replace('/restapi', ''),
             methods=[*api.methods],
             endpoint=endpoint,
             view_func=require_open_permission(func),
