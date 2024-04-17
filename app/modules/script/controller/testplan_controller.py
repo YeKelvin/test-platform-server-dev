@@ -61,15 +61,15 @@ def create_testplan(CODE='CREATE_TESTPLAN'):
         Argument('workspaceNo', required=True, nullable=False, help='空间编号不能为空'),
         Argument('planName', required=True, nullable=False, help='计划名称不能为空'),
         Argument('planDesc'),
-        Argument('scrumVersion'),
         Argument('scrumSprint'),
+        Argument('scrumVersion'),
         Argument('collections', type=list, required=True, nullable=False, help='集合列表不能为空'),
-        Argument('save', default=True),
         Argument('delay', default=0),
         Argument('iterations', default=1),
+        Argument('noticeBots', type=list),
         Argument('concurrency', default=1),
+        Argument('save', default=True),
         Argument('saveOnError', default=False),
-        Argument('noticeRobots', type=list),
         Argument('stopOnErrorCount', default=3)
     ).parse()
     return service.create_testplan(req)
@@ -84,15 +84,15 @@ def modify_testplan(CODE='MODIFY_TESTPLAN'):
         Argument('planNo', required=True, nullable=False, help='计划编号不能为空'),
         Argument('planName', required=True, nullable=False, help='计划名称不能为空'),
         Argument('planDesc'),
-        Argument('scrumVersion'),
         Argument('scrumSprint'),
+        Argument('scrumVersion'),
         Argument('collections', type=list, required=True, nullable=False, help='集合列表不能为空'),
-        Argument('concurrency', default=1),
         Argument('iterations', default=1),
+        Argument('noticeBots', type=list),
+        Argument('concurrency', default=1),
         Argument('delay', default=0),
         Argument('save', default=True),
         Argument('saveOnError', default=False),
-        Argument('noticeRobots', type=list),
         Argument('stopOnErrorCount', default=3)
     ).parse()
     return service.modify_testplan(req)

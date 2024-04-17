@@ -8,9 +8,9 @@ from flask import g
 from flask import request
 
 from app.modules.opencenter.model import TOpenAccessToken
-from app.modules.public.model import TWorkspaceRestriction
-from app.modules.public.model import TWorkspaceRestrictionExemption
-from app.modules.public.model import TWorkspaceUser
+from app.modules.system.model import TWorkspaceExemption
+from app.modules.system.model import TWorkspaceRestriction
+from app.modules.system.model import TWorkspaceUser
 from app.modules.usercenter.model import TGroupMember
 from app.modules.usercenter.model import TPermission
 from app.modules.usercenter.model import TRole
@@ -78,7 +78,7 @@ def exists_workspace_restriction(workspace_no):
 
 def is_restriction_exemption_member(workspace_no, user_no):
     # 查询空间显示豁免
-    exemption = TWorkspaceRestrictionExemption.filter_by(WORKSPACE_NO=workspace_no).first()
+    exemption = TWorkspaceExemption.filter_by(WORKSPACE_NO=workspace_no).first()
     # 校验用户是否为豁免成员
     if user_no in exemption.USERS:
         return True

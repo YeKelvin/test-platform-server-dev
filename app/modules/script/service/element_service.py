@@ -6,8 +6,6 @@ from flask import request
 from loguru import logger
 
 from app.database import db_query
-from app.modules.public.dao import workspace_dao
-from app.modules.public.model import TWorkspace
 from app.modules.script.dao import element_children_dao
 from app.modules.script.dao import element_component_dao
 from app.modules.script.dao import element_property_dao
@@ -29,6 +27,8 @@ from app.modules.script.model import TElementComponent
 from app.modules.script.model import TElementProperty
 from app.modules.script.model import TTestElement
 from app.modules.script.types import TypedElement
+from app.modules.system.dao import workspace_dao
+from app.modules.system.model import TWorkspace
 from app.signals import element_copied_signal
 from app.signals import element_created_signal
 from app.signals import element_modified_signal

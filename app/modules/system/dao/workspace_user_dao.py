@@ -2,7 +2,7 @@
 # @File    : workspace_user_dao.py
 # @Time    : 2021/6/5 23:27
 # @Author  : Kelvin.Ye
-from app.modules.public.model import TWorkspaceUser
+from app.modules.system.model import TWorkspaceUser
 
 
 def select_by_workspace_and_user(workspace_no, user_no) -> TWorkspaceUser:

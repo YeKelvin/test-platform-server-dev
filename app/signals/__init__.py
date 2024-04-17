@@ -15,7 +15,10 @@ element_removed_signal = signal('RecordRemoveElement')
 element_modified_signal = signal('RecordModifyElement')
 element_transferred_signal = signal('RecordTransferElement')
 
-# api log
+# notice
+notice_signal = signal('Notice')
+
+# apilog
 restapi_log_signal = signal('RestAPILog')
 openapi_log_signal = signal('OpenAPILog')
 
@@ -26,5 +29,6 @@ record_delete_signal = signal('RecordDelete')
 
 
 from . import element_reveiver  # noqa
+from . import notice_reveiver   # noqa
 from . import openapi_receiver  # noqa
 from . import system_receiver   # noqa

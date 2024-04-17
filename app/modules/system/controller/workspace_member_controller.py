@@ -2,8 +2,8 @@
 # @File    : workspace_user_controller.py
 # @Time    : 2021-09-24 22:47:22
 # @Author  : Kelvin.Ye
-from app.modules.public.controller import blueprint
-from app.modules.public.service import workspace_member_service as service
+from app.modules.system.controller import blueprint
+from app.modules.system.service import workspace_member_service as service
 from app.tools.parser import Argument
 from app.tools.parser import JsonParser
 from app.tools.require import require_login

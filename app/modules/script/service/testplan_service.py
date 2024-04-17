@@ -3,7 +3,6 @@
 # @Time    : 2020/3/17 14:32
 # @Author  : Kelvin.Ye
 from app.database import db_query
-from app.modules.public.dao import workspace_dao
 from app.modules.script.dao import test_collection_result_dao
 from app.modules.script.dao import test_element_dao
 from app.modules.script.dao import test_report_dao
@@ -14,6 +13,7 @@ from app.modules.script.dao import variable_dataset_dao
 from app.modules.script.enum import RunningState
 from app.modules.script.enum import TestplanState
 from app.modules.script.model import TTestplan
+from app.modules.system.dao import workspace_dao
 from app.modules.usercenter.model import TUser
 from app.tools.identity import new_id
 from app.tools.service import http_service
@@ -117,9 +117,9 @@ def query_testplan(req):
         'save': testplan.SETTINGS['SAVE'],
         'delay': testplan.SETTINGS['DELAY'],
         'iterations': testplan.SETTINGS['ITERATIONS'],
+        'noticeBots': testplan.SETTINGS['NOTICE_BOTS'],
         'concurrency': testplan.SETTINGS['CONCURRENCY'],
         'saveOnError': testplan.SETTINGS['SAVE_ON_ERROR'],
-        'noticeRobots': testplan.SETTINGS['NOTICE_ROBOTS'],
         'stopOnErrorCount': testplan.SETTINGS['STOP_ON_ERROR_COUNT']
     }
 
@@ -150,7 +150,7 @@ def create_testplan(req):
             'ITERATIONS': req.iterations,
             'CONCURRENCY': req.concurrency,
             'SAVE_ON_ERROR': req.saveOnError,
-            'NOTICE_ROBOTS': req.noticeRobots,
+            'NOTICE_BOTS': req.noticeBots,
             'STOP_ON_ERROR_COUNT': req.stopOnErrorCount
         }
     )
@@ -177,8 +177,8 @@ def modify_testplan(req):
             'DELAY': req.delay,
             'ITERATIONS': req.iterations,
             'CONCURRENCY': req.concurrency,
+            'NOTICE_BOTS': req.noticeBots,
             'SAVE_ON_ERROR': req.saveOnError,
-            'NOTICE_ROBOTS': req.noticeRobots,
             'STOP_ON_ERROR_COUNT': req.stopOnErrorCount
         }
     )

@@ -2,8 +2,8 @@
 # @File    : tag_service.py
 # @Time    : 2021-08-17 11:01:35
 # @Author  : Kelvin.Ye
-from app.modules.public.dao import tag_dao
-from app.modules.public.model import TTag
+from app.modules.system.dao import tag_dao
+from app.modules.system.model import TTag
 from app.tools.identity import new_id
 from app.tools.service import http_service
 from app.tools.validator import check_absent

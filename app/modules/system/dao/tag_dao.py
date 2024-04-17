@@ -2,7 +2,7 @@
 # @File    : tag_dao.py
 # @Time    : 2021-08-17 11:02:04
 # @Author  : Kelvin.Ye
-from app.modules.public.model import TTag
+from app.modules.system.model import TTag
 
 
 def select_by_no(tag_no) -> TTag:

@@ -9,12 +9,12 @@ from sqlalchemy import union_all
 from sqlalchemy.orm import aliased
 
 from app.database import db_execute
-from app.modules.public.dao import workspace_dao
 from app.modules.script.dao import test_element_dao
 from app.modules.script.enum import is_collection
 from app.modules.script.enum import is_worker
 from app.modules.script.model import TElementChangelog
 from app.modules.script.model import TTestElement
+from app.modules.system.dao import workspace_dao
 from app.modules.usercenter.model import TUser
 from app.tools.service import http_service
 

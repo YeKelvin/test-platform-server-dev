@@ -3,18 +3,18 @@
 # @Time    : 2019/11/14 9:51
 # @Author  : Kelvin.Ye
 from app.database import db_query
-from app.modules.public.dao import workspace_dao
-from app.modules.public.dao import workspace_user_dao
-from app.modules.public.enum import WorkspaceScope
-from app.modules.public.model import TWorkspace
-from app.modules.public.model import TWorkspaceRestriction
-from app.modules.public.model import TWorkspaceRestrictionExemption
-from app.modules.public.model import TWorkspaceUser
 from app.modules.script.enum import ElementClass
 from app.modules.script.enum import ElementType
 from app.modules.script.enum import VariableDatasetWeight
 from app.modules.script.model import TTestElement
 from app.modules.script.model import TVariableDataset
+from app.modules.system.dao import workspace_dao
+from app.modules.system.dao import workspace_user_dao
+from app.modules.system.enum import WorkspaceScope
+from app.modules.system.model import TWorkspace
+from app.modules.system.model import TWorkspaceExemption
+from app.modules.system.model import TWorkspaceRestriction
+from app.modules.system.model import TWorkspaceUser
 from app.modules.usercenter.model import TRole
 from app.modules.usercenter.model import TUser
 from app.modules.usercenter.model import TUserRole
@@ -185,7 +185,7 @@ def remove_workspace(req):
     # 删除空间限制
     TWorkspaceRestriction.deletes_by(WORKSPACE_NO=req.workspaceNo)
     # 删除空间限制豁免
-    TWorkspaceRestrictionExemption.deletes_by(WORKSPACE_NO=req.workspaceNo)
+    TWorkspaceExemption.deletes_by(WORKSPACE_NO=req.workspaceNo)
     # 删除空间
     workspace.delete()
 

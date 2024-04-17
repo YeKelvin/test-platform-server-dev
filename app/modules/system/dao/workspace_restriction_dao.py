@@ -2,7 +2,7 @@
 # @File    : workspace_restriction_dao.py
 # @Time    : 2022/4/22 15:50
 # @Author  : Kelvin.Ye
-from app.modules.public.model import TWorkspaceRestriction
+from app.modules.system.model import TWorkspaceRestriction
 
 
 def select_by_workspace_and_permission(workspace_no, permission_no) -> TWorkspaceRestriction:

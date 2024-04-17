@@ -2,8 +2,8 @@
 # @File    : tag_controller.py
 # @Time    : 2021-08-17 11:00:49
 # @Author  : Kelvin.Ye
-from app.modules.public.controller import blueprint
-from app.modules.public.service import tag_service as service
+from app.modules.system.controller import blueprint
+from app.modules.system.service import tag_service as service
 from app.tools.parser import Argument
 from app.tools.parser import JsonParser
 from app.tools.require import require_login

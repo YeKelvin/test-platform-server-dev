@@ -10,7 +10,7 @@ from sqlalchemy import select
 from app.database import db_execute
 from app.modules.opencenter.dao import open_access_token_dao
 from app.modules.opencenter.model import TOpenAccessToken
-from app.modules.public.model import TWorkspace
+from app.modules.system.model import TWorkspace
 from app.modules.usercenter.model import TObject
 from app.modules.usercenter.model import TPermission
 from app.tools.exceptions import ServiceError

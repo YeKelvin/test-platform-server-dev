@@ -2,7 +2,7 @@
 # @File    : workspace_dao.py
 # @Time    : 2021/6/5 23:28
 # @Author  : Kelvin.Ye
-from app.modules.public.model import TWorkspace
+from app.modules.system.model import TWorkspace
 
 
 def select_by_no(workspace_no) -> TWorkspace:

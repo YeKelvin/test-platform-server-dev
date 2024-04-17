@@ -7,10 +7,10 @@ import click
 from flask.cli import with_appcontext
 
 from app.extension import db  # noqa
-from app.modules.public.model import TWorkspace  # noqa
-from app.modules.public.model import TWorkspaceUser  # noqa
 from app.modules.script.model import TTestElement  # noqa
 from app.modules.script.model import TVariableDataset  # noqa
+from app.modules.system.model import TWorkspace  # noqa
+from app.modules.system.model import TWorkspaceUser  # noqa
 from app.modules.usercenter.model import TModule  # noqa
 from app.modules.usercenter.model import TObject  # noqa
 from app.modules.usercenter.model import TPermission  # noqa
@@ -23,10 +23,10 @@ from app.tools.identity import new_id
 from app.tools.security import encrypt_password
 
 
+from app.modules.messaging.model import *   # noqa isort:skip
 from app.modules.opencenter.model import *  # noqa isort:skip
 from app.modules.script.model import *      # noqa isort:skip
 from app.modules.system.model import *      # noqa isort:skip
-from app.modules.public.model import *      # noqa isort:skip
 from app.modules.usercenter.model import *  # noqa isort:skip
 
 
@@ -138,9 +138,9 @@ def init_permission():
 def init_permission_module():
     TModule.norecord_insert(MODULE_NO=new_id(), MODULE_NAME='用户中心', MODULE_CODE='USERCENTER')
     TModule.norecord_insert(MODULE_NO=new_id(), MODULE_NAME='系统', MODULE_CODE='SYSTEM')
-    TModule.norecord_insert(MODULE_NO=new_id(), MODULE_NAME='公共', MODULE_CODE='PUBLIC')
     TModule.norecord_insert(MODULE_NO=new_id(), MODULE_NAME='脚本', MODULE_CODE='SCRIPT')
-    TModule.norecord_insert(MODULE_NO=new_id(), MODULE_NAME='调度', MODULE_CODE='SCHEDULER')
+    TModule.norecord_insert(MODULE_NO=new_id(), MODULE_NAME='作业调度', MODULE_CODE='SCHEDULER')
+    TModule.norecord_insert(MODULE_NO=new_id(), MODULE_NAME='消息中心', MODULE_CODE='MESSAGING')
     TModule.norecord_insert(MODULE_NO=new_id(), MODULE_NAME='开放中心', MODULE_CODE='OPENCENTER')
 
 
@@ -153,10 +153,8 @@ def init_permission_object():
     TObject.norecord_insert(OBJECT_NO=new_id(), OBJECT_NAME='权限', OBJECT_CODE='PERMISSION')
     # SYSTEM
     TObject.norecord_insert(OBJECT_NO=new_id(), OBJECT_NAME='日志', OBJECT_CODE='LOG')
-    # PUBLIC
-    TObject.norecord_insert(OBJECT_NO=new_id(), OBJECT_NAME='空间', OBJECT_CODE='WORKSPACE')
     TObject.norecord_insert(OBJECT_NO=new_id(), OBJECT_NAME='标签', OBJECT_CODE='TAG')
-    TObject.norecord_insert(OBJECT_NO=new_id(), OBJECT_NAME='消息', OBJECT_CODE='MESSAGE')
+    TObject.norecord_insert(OBJECT_NO=new_id(), OBJECT_NAME='空间', OBJECT_CODE='WORKSPACE')
     # SCRIPT
     TObject.norecord_insert(OBJECT_NO=new_id(), OBJECT_NAME='元素', OBJECT_CODE='ELEMENT')
     TObject.norecord_insert(OBJECT_NO=new_id(), OBJECT_NAME='变量', OBJECT_CODE='VARIABLE')
@@ -165,6 +163,8 @@ def init_permission_object():
     TObject.norecord_insert(OBJECT_NO=new_id(), OBJECT_NAME='测试报告', OBJECT_CODE='TESTREPORT')
     # SCHEDULE
     TObject.norecord_insert(OBJECT_NO=new_id(), OBJECT_NAME='定时任务', OBJECT_CODE='JOB')
+    # MESSAGING
+    TObject.norecord_insert(OBJECT_NO=new_id(), OBJECT_NAME='通知', OBJECT_CODE='NOTICE')
     # OPENCENTER
     TObject.norecord_insert(OBJECT_NO=new_id(), OBJECT_NAME='第三方应用', OBJECT_CODE='APPLICATION')
     TObject.norecord_insert(OBJECT_NO=new_id(), OBJECT_NAME='访问令牌', OBJECT_CODE='ACCESS_TOKEN')
@@ -200,25 +200,20 @@ def init_permission_item():
     create_permission('USERCENTER', 'PERMISSION', '查询权限', 'QUERY_PERMISSION', 'QUERY')
     # log
     create_permission('SYSTEM', 'LOG', '查询日志', 'QUERY_LOG', 'QUERY')
-    # workspace
-    create_permission('PUBLIC', 'WORKSPACE', '查询空间', 'QUERY_WORKSPACE', 'QUERY')
-    create_permission('PUBLIC', 'WORKSPACE', '新增空间', 'CREATE_WORKSPACE', 'CREATE')
-    create_permission('PUBLIC', 'WORKSPACE', '修改空间', 'MODIFY_WORKSPACE', 'MODIFY')
-    create_permission('PUBLIC', 'WORKSPACE', '删除空间', 'REMOVE_WORKSPACE', 'REMOVE')
-    create_permission('PUBLIC', 'WORKSPACE', '查询空间成员', 'QUERY_WORKSPACE_MEMBER', 'QUERY')
-    create_permission('PUBLIC', 'WORKSPACE', '修改空间成员', 'MODIFY_WORKSPACE_MEMBER', 'MODIFY')
-    create_permission('PUBLIC', 'WORKSPACE', '查询空间限制', 'QUERY_WORKSPACE_RESTRICTION', 'QUERY')
-    create_permission('PUBLIC', 'WORKSPACE', '设置空间限制', 'SET_WORKSPACE_RESTRICTION', 'SET')
     # tag
-    create_permission('PUBLIC', 'TAG', '查询标签', 'QUERY_TAG', 'QUERY')
-    create_permission('PUBLIC', 'TAG', '新增标签', 'CREATE_TAG', 'CREATE')
-    create_permission('PUBLIC', 'TAG', '修改标签', 'MODIFY_TAG', 'MODIFY')
-    create_permission('PUBLIC', 'TAG', '删除标签', 'REMOVE_TAG', 'REMOVE')
-    # message
-    create_permission('PUBLIC', 'MESSAGE', '查询机器人', 'QUERY_ROBOT', 'QUERY')
-    create_permission('PUBLIC', 'MESSAGE', '新增机器人', 'CREATE_ROBOT', 'CREATE')
-    create_permission('PUBLIC', 'MESSAGE', '修改机器人', 'MODIFY_ROBOT', 'MODIFY')
-    create_permission('PUBLIC', 'MESSAGE', '删除机器人', 'REMOVE_ROBOT', 'REMOVE')
+    create_permission('SYSTEM', 'TAG', '查询标签', 'QUERY_TAG', 'QUERY')
+    create_permission('SYSTEM', 'TAG', '新增标签', 'CREATE_TAG', 'CREATE')
+    create_permission('SYSTEM', 'TAG', '修改标签', 'MODIFY_TAG', 'MODIFY')
+    create_permission('SYSTEM', 'TAG', '删除标签', 'REMOVE_TAG', 'REMOVE')
+    # workspace
+    create_permission('SYSTEM', 'WORKSPACE', '查询空间', 'QUERY_WORKSPACE', 'QUERY')
+    create_permission('SYSTEM', 'WORKSPACE', '新增空间', 'CREATE_WORKSPACE', 'CREATE')
+    create_permission('SYSTEM', 'WORKSPACE', '修改空间', 'MODIFY_WORKSPACE', 'MODIFY')
+    create_permission('SYSTEM', 'WORKSPACE', '删除空间', 'REMOVE_WORKSPACE', 'REMOVE')
+    create_permission('SYSTEM', 'WORKSPACE', '查询空间成员', 'QUERY_WORKSPACE_MEMBER', 'QUERY')
+    create_permission('SYSTEM', 'WORKSPACE', '修改空间成员', 'MODIFY_WORKSPACE_MEMBER', 'MODIFY')
+    create_permission('SYSTEM', 'WORKSPACE', '查询空间限制', 'QUERY_WORKSPACE_RESTRICTION', 'QUERY')
+    create_permission('SYSTEM', 'WORKSPACE', '设置空间限制', 'SET_WORKSPACE_RESTRICTION', 'SET')
     # job
     create_permission('SCHEDULER', 'JOB', '查询定时任务', 'QUERY_JOB', 'QUERY')
     create_permission('SCHEDULER', 'JOB', '新增定时任务', 'CREATE_JOB', 'CREATE')
@@ -259,6 +254,11 @@ def init_permission_item():
     create_permission('SCRIPT', 'TESTPLAN', '查询执行记录', 'QUERY_TESTPLAN_EXECUTION', 'QUERY')
     # testreport
     create_permission('SCRIPT', 'TESTREPORT', '查询测试报告', 'QUERY_TESTREPORT', 'QUERY')
+    # notice
+    create_permission('MESSAGING', 'NOTICE', '查询机器人', 'QUERY_NOTICE_BOT', 'QUERY')
+    create_permission('MESSAGING', 'NOTICE', '新增机器人', 'CREATE_NOTICE_BOT', 'CREATE')
+    create_permission('MESSAGING', 'NOTICE', '修改机器人', 'MODIFY_NOTICE_BOT', 'MODIFY')
+    create_permission('MESSAGING', 'NOTICE', '删除机器人', 'REMOVE_NOTICE_BOT', 'REMOVE')
     # openapi
     create_permission('OPENCENTER', 'APPLICATION', '查询应用', 'QUERY_APPLICATION', 'QUERY')
     create_permission('OPENCENTER', 'APPLICATION', '新增应用', 'CREATE_APPLICATION', 'CREATE')
@@ -321,8 +321,8 @@ def create_table(name):
     from sqlalchemy import create_engine
 
     from app import config as CONFIG
+    from app.modules.messaging import model as messaging_model
     from app.modules.opencenter import model as opencenter_model
-    from app.modules.public import model as public_model
     from app.modules.schedule import model as schedule_model
     from app.modules.script import model as script_model
     from app.modules.system import model as system_model
@@ -330,10 +330,10 @@ def create_table(name):
 
     engine = create_engine(CONFIG.DB_URL)
 
-    if hasattr(opencenter_model, name):
+    if hasattr(messaging_model, name):
+        table = getattr(messaging_model, name)
+    elif hasattr(opencenter_model, name):
         table = getattr(opencenter_model, name)
-    elif hasattr(public_model, name):
-        table = getattr(public_model, name)
     elif hasattr(schedule_model, name):
         table = getattr(schedule_model, name)
     elif hasattr(script_model, name):

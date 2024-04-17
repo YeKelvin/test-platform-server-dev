@@ -11,13 +11,13 @@ from sqlalchemy import or_
 
 from app import config as CONFIG
 from app.database import db_query
-from app.modules.public.model import TWorkspace
-from app.modules.public.model import TWorkspaceUser
 from app.modules.script.enum import ElementClass
 from app.modules.script.enum import ElementType
 from app.modules.script.enum import VariableDatasetWeight
 from app.modules.script.model import TTestElement
 from app.modules.script.model import TVariableDataset
+from app.modules.system.model import TWorkspace
+from app.modules.system.model import TWorkspaceUser
 from app.modules.usercenter.dao import group_dao
 from app.modules.usercenter.dao import group_member_dao
 from app.modules.usercenter.dao import role_dao

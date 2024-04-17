@@ -12,9 +12,9 @@ from app import config as CONFIG
 from app.extension import db
 from app.extension import executor
 from app.extension import socketio
-from app.modules.public.dao import notice_robot_dao
-from app.modules.public.enum import RobotState
-from app.modules.public.enum import RobotType
+from app.modules.messaging.dao import notice_bot_dao
+from app.modules.messaging.enum import NoticeBotState
+from app.modules.messaging.enum import NoticeBotType
 from app.modules.script.dao import element_children_dao
 from app.modules.script.dao import test_element_dao
 from app.modules.script.dao import test_report_dao
@@ -49,7 +49,7 @@ from app.tools.service import http_service
 from app.tools.validator import check_exists
 from app.tools.validator import check_workspace_permission
 from app.utils.flask_util import get_flask_app
-from app.utils.notice import wecom as WeComTool
+from app.utils.notice import wecom as WeComNotice
 from app.utils.time_util import datetime_now_by_utc8
 from app.utils.time_util import microsecond_to_h_m_s
 from app.utils.time_util import timestamp_now
@@ -427,7 +427,7 @@ def run_testplan(plan_no, datasets, use_current_value, check_workspace=True):
             'DELAY': testplan.SETTINGS['DELAY'],
             'ITERATIONS': testplan.SETTINGS['ITERATIONS'],
             'CONCURRENCY': testplan.SETTINGS['CONCURRENCY'],
-            'NOTICE_ROBOTS': testplan.SETTINGS['NOTICE_ROBOTS'],
+            'NOTICE_BOTS': testplan.SETTINGS['NOTICE_BOTS'],
             'SAVE_ON_ERROR': testplan.SETTINGS['SAVE_ON_ERROR'],
             'VARIABLE_DATASETS': datasets,
             'USE_CURRENT_VALUE': use_current_value,
@@ -460,8 +460,8 @@ def run_testplan(plan_no, datasets, use_current_value, check_workspace=True):
     save = testplan.SETTINGS.get('SAVE')
     delay = testplan.SETTINGS.get('DELAY')
     iterations = testplan.SETTINGS.get('ITERATIONS')
+    notice_bots = testplan.SETTINGS.get('NOTICE_BOTS')
     save_on_error = testplan.SETTINGS.get('SAVE_ON_ERROR')
-    notice_robots = testplan.SETTINGS.get('NOTICE_ROBOTS')
 
     # 异步函数
     def start(app):
@@ -478,7 +478,7 @@ def run_testplan(plan_no, datasets, use_current_value, check_workspace=True):
                     delay,
                     save,
                     save_on_error,
-                    notice_robots
+                    notice_bots
                 )
         except Exception:
             logger.exception(f'执行编号:[ {execution_no} ] 执行异常')
@@ -507,7 +507,7 @@ def start_testplan(
         delay,
         save,
         save_on_error,
-        notification_robots
+        notice_bots
 ):
     logger.info(f'执行编号:[ {execution_no} ] 开始执行测试计划')
     # 记录开始时间
@@ -579,18 +579,18 @@ def start_testplan(
         db.session.commit()  # 这里要实时更新
 
     # 结果通知
-    if notification_robots:
+    if notice_bots:
         logger.info(f'执行编号:[ {execution_no} ] 发送执行结果消息')
-        for robot_no in notification_robots:
-            robot = notice_robot_dao.select_by_no(robot_no)
-            if robot.STATE == RobotState.DISABLE.value:
-                logger.info(f'执行编号:[ {execution_no} ] 消息机器人:[ {robot.ROBOT_NAME} ] 消息机器人状态已禁用')
+        for bot_no in notice_bots:
+            bot = notice_bot_dao.select_by_no(bot_no)
+            if bot.STATE == NoticeBotState.DISABLE.value:
+                logger.info(f'执行编号:[ {execution_no} ] 消息机器人:[ {bot.BOT_NAME} ] 消息机器人状态已禁用')
                 continue
             # 企业微信
-            if robot.ROBOT_TYPE == RobotType.WECOM.value:
-                logger.info(f'执行编号:[ {execution_no} ] 消息机器人:[ {robot.ROBOT_NAME} ] 发送企业微信消息')
-                WeComTool.send_text_message(
-                    robotkey=robot.ROBOT_CONFIG.get('key'),
+            if bot.BOT_TYPE == NoticeBotType.WECOM.value:
+                logger.info(f'执行编号:[ {execution_no} ] 消息机器人:[ {bot.BOT_NAME} ] 发送企业微信消息')
+                WeComNotice.send_text(
+                    webhook=bot.BOT_WEBHOOK,
                     content=get_notification_message(execution, report)
                 )
 

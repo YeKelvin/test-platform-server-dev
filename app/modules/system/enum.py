@@ -17,19 +17,3 @@ class WorkspaceScope(Enum):
 
     # 公共空间，不需要添加用户关联，所有用户都可以使用
     PUBLIC = 'PUBLIC'
-
-
-@unique
-class RobotState(Enum):
-    # 启用
-    ENABLE = 'ENABLE'
-    # 禁用
-    DISABLE = 'DISABLE'
-
-
-@unique
-class RobotType(Enum):
-    # 企业微信
-    WECOM = 'WECOM'
-    # 钉钉
-    DINGTALK = 'DINGTALK'

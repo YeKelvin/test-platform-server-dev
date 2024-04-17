@@ -3,11 +3,11 @@
 # @Time    : 2022/4/22 16:11
 # @Author  : Kelvin.Ye
 from app.database import db_query
-from app.modules.public.dao import workspace_dao
-from app.modules.public.dao import workspace_restriction_dao
-from app.modules.public.dao import workspace_restriction_exemption_dao
-from app.modules.public.model import TWorkspaceRestriction
-from app.modules.public.model import TWorkspaceRestrictionExemption
+from app.modules.system.dao import workspace_dao
+from app.modules.system.dao import workspace_exemption_dao
+from app.modules.system.dao import workspace_restriction_dao
+from app.modules.system.model import TWorkspaceExemption
+from app.modules.system.model import TWorkspaceRestriction
 from app.modules.usercenter.model import TModule
 from app.modules.usercenter.model import TObject
 from app.modules.usercenter.model import TPermission
@@ -18,7 +18,7 @@ from app.utils.sqlalchemy_util import QueryCondition
 
 @http_service
 def query_workspace_restriction(req):
-    exemption = workspace_restriction_exemption_dao.select_by_workspace(req.workspaceNo)
+    exemption = workspace_exemption_dao.select_by_workspace(req.workspaceNo)
 
     return {
         'permissionList': get_workspace_restriction_list(req.workspaceNo),
@@ -84,13 +84,13 @@ def set_workspace_permission(workspace_no, permissions):
 
 
 def set_workspace_exemption(workspace_no, users, groups):
-    if exemption := workspace_restriction_exemption_dao.select_by_workspace(workspace_no):
+    if exemption := workspace_exemption_dao.select_by_workspace(workspace_no):
         if users is not None:
             exemption.USERS = users
         if groups is not None:
             exemption.GROUPS = groups
     else:
-        TWorkspaceRestrictionExemption.insert(
+        TWorkspaceExemption.insert(
             WORKSPACE_NO=workspace_no,
             USERS=users if groups is not None else [],
             GROUPS=groups if groups is not None else []

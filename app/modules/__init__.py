@@ -6,14 +6,13 @@
 from flask import Blueprint
 
 
-# note  : /restapi 由nginx代理，后端不需要处理
 restapi = Blueprint('restapi', __name__, url_prefix='/restapi')
 
 
 # 加载子路由
 # from .filecenter.controller import blueprint as filecenter_blueprint
+from .messaging.controller import blueprint as messaging_blueprint    # noqa
 from .opencenter.controller import blueprint as opencenter_blueprint    # noqa
-from .public.controller import blueprint as public_blueprint            # noqa
 from .schedule.controller import blueprint as schedule_blueprint        # noqa
 from .script.controller import blueprint as script_blueprint            # noqa
 from .system.controller import blueprint as system_blueprint            # noqa
@@ -22,8 +21,8 @@ from .usercenter.controller import blueprint as usercenter_blueprint    # noqa
 
 # 注册子路由
 # restapi.register_blueprint(filecenter_blueprint)
+restapi.register_blueprint(messaging_blueprint)
 restapi.register_blueprint(opencenter_blueprint)
-restapi.register_blueprint(public_blueprint)
 restapi.register_blueprint(schedule_blueprint)
 restapi.register_blueprint(script_blueprint)
 restapi.register_blueprint(system_blueprint)

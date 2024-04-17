@@ -3,10 +3,10 @@
 # @Time    : 2021/6/5 23:39
 # @Author  : Kelvin.Ye
 from app.database import db_query
-from app.modules.public.dao import workspace_dao
-from app.modules.public.dao import workspace_user_dao
-from app.modules.public.model import TWorkspace
-from app.modules.public.model import TWorkspaceUser
+from app.modules.system.dao import workspace_dao
+from app.modules.system.dao import workspace_user_dao
+from app.modules.system.model import TWorkspace
+from app.modules.system.model import TWorkspaceUser
 from app.modules.usercenter.model import TRole
 from app.modules.usercenter.model import TUser
 from app.modules.usercenter.model import TUserRole
