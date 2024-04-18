@@ -24,10 +24,13 @@ class TNoticeBot(TableModel, BaseColumn):
     STATE = db.Column(db.String(16), nullable=False, default='ENABLE', comment='机器人状态(ENABLE:启用, DISABLE:禁用)')
 
 
-# class TNoticeLog(TableModel, BaseColumn):
-#     """通知日志表"""
-#     __tablename__ = 'NOTICE_LOG'
-    # LOG_NO = db.Column(db.String(32), index=True, unique=True, nullable=False, comment='日志编号')
-    # BOT_NO = db.Column(db.String(32), comment='机器人编号')
-    # CONTENT = db.Column(db.Text(), nullable=False, comment='通知内容')
-    # SUCCESS = db.Column(db.Boolean(), comment='发送成功')
+class TNoticeLog(TableModel, BaseColumn):
+    """通知日志表"""
+    __tablename__ = 'NOTICE_LOG'
+    WORKSPACE_NO = db.Column(db.String(32), index=True, nullable=False, comment='空间编号')
+    LOG_NO = db.Column(db.String(32), index=True, unique=True, nullable=False, comment='日志编号')
+    EVENT = db.Column(db.String(64), nullable=False, comment='触发事件')
+    CHANNEL = db.Column(db.String(16), nullable=False, comment='通知渠道')
+    CONTENT = db.Column(db.Text(), nullable=False, comment='通知内容')
+    MENTIONS = db.Column(JSONB, comment='通知提醒人')
+    SUCCESS = db.Column(db.Boolean(), comment='发送成功')

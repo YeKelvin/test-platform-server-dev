@@ -4,13 +4,18 @@
 # @Author  : Kelvin.Ye
 import httpx
 
-from loguru import logger
-
+from app.tools.exceptions import NoticeError
 from app.utils.json_util import to_json
 
 
-headers = {'content-type': 'application/json'}
-encoding = 'utf-8'
+def send(webhook, data):
+    res = httpx.post(
+        url=webhook,
+        headers={'content-type': 'application/json'},
+        data=to_json(data).encode(encoding='UTF-8')
+    )
+    if res.status_code != 200:
+        raise NoticeError(f'企业微信通知发送失败，接口响应: {res.text}')
 
 
 def send_text(webhook: str, content: str, mentioned_list: list = None, mentioned_mobile_list: list = None):
@@ -30,8 +35,7 @@ def send_text(webhook: str, content: str, mentioned_list: list = None, mentioned
             'mentioned_mobile_list': mentioned_mobile_list or []
         }
     }
-    res = httpx.post(url=webhook, headers=headers, data=to_json(data).encode(encoding=encoding))
-    res.status_code != 200 and logger.error(f'发送企业微信通知失败，接口响应: {res.text}')
+    send(webhook, data)
 
 
 def send_markdown(webhook: str, content: str):
@@ -47,8 +51,8 @@ def send_markdown(webhook: str, content: str):
             'content': content
         }
     }
-    res = httpx.post(url=webhook, headers=headers, data=to_json(data).encode(encoding=encoding))
-    res.status_code != 200 and logger.error(f'发送企业微信通知失败，接口响应: {res.text}')
+    send(webhook, data)
+
 
 
 def send_image(webhook: str, base64: str, md5: str):
@@ -66,8 +70,7 @@ def send_image(webhook: str, base64: str, md5: str):
             'md5': md5
         }
     }
-    res = httpx.post(url=webhook, headers=headers, data=to_json(data).encode(encoding=encoding))
-    res.status_code != 200 and logger.error(f'发送企业微信通知失败，接口响应: {res.text}')
+    send(webhook, data)
 
 
 def send_news(webhook: str, articles: list):
@@ -87,8 +90,7 @@ def send_news(webhook: str, articles: list):
             'articles': articles
         }
     }
-    res = httpx.post(url=webhook, headers=headers, data=to_json(data).encode(encoding=encoding))
-    res.status_code != 200 and logger.error(f'发送企业微信通知失败，接口响应: {res.text}')
+    send(webhook, data)
 
 
 def send_file(webhook: str, media_id: str):
@@ -104,8 +106,7 @@ def send_file(webhook: str, media_id: str):
             'media_id': media_id
         }
     }
-    res = httpx.post(url=webhook, headers=headers, data=to_json(data).encode(encoding=encoding))
-    res.status_code != 200 and logger.error(f'发送企业微信通知失败，接口响应: {res.text}')
+    send(webhook, data)
 
 
 def send_template_card(webhook: str, card: dict):
@@ -114,5 +115,4 @@ def send_template_card(webhook: str, card: dict):
         'msgtype': 'template_card',
         'template_card': card
     }
-    res = httpx.post(url=webhook, headers=headers, data=to_json(data).encode(encoding=encoding))
-    res.status_code != 200 and logger.error(f'发送企业微信通知失败，接口响应: {res.text}')
+    send(webhook, data)

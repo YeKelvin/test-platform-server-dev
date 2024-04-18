@@ -21,3 +21,11 @@ class NoticeBotType(Enum):
     WECOM = 'WECOM'
     # 钉钉
     DINGTALK = 'DINGTALK'
+    # 飞书
+    FEISHU = 'FEISHU'
+
+
+@unique
+class NoticeEvent(Enum):
+    # 测试计划执行完成
+    TESTPLAN_EXECUTION_COMPLETED = 'TESTPLAN_EXECUTION_COMPLETED'

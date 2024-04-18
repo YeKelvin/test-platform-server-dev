@@ -73,3 +73,7 @@ class ParseError(Exception):
 
 class TestplanInterruptError(Exception):
     ...
+
+
+class NoticeError(Exception):
+    ...

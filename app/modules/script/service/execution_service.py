@@ -12,9 +12,7 @@ from app import config as CONFIG
 from app.extension import db
 from app.extension import executor
 from app.extension import socketio
-from app.modules.messaging.dao import notice_bot_dao
-from app.modules.messaging.enum import NoticeBotState
-from app.modules.messaging.enum import NoticeBotType
+from app.modules.messaging.enum import NoticeEvent
 from app.modules.script.dao import element_children_dao
 from app.modules.script.dao import test_element_dao
 from app.modules.script.dao import test_report_dao
@@ -39,6 +37,7 @@ from app.modules.script.model import TTestplanExecution
 from app.modules.script.model import TTestplanExecutionCollection
 from app.modules.script.model import TTestReport
 from app.modules.usercenter.dao import user_dao
+from app.signals.notice_reveiver import notice_signal
 from app.tools.cache import executing_pymeters
 from app.tools.exceptions import ServiceError
 from app.tools.exceptions import TestplanInterruptError
@@ -49,7 +48,6 @@ from app.tools.service import http_service
 from app.tools.validator import check_exists
 from app.tools.validator import check_workspace_permission
 from app.utils.flask_util import get_flask_app
-from app.utils.notice import wecom as WeComNotice
 from app.utils.time_util import datetime_now_by_utc8
 from app.utils.time_util import microsecond_to_h_m_s
 from app.utils.time_util import timestamp_now
@@ -580,24 +578,18 @@ def start_testplan(
 
     # 结果通知
     if notice_bots:
-        logger.info(f'执行编号:[ {execution_no} ] 发送执行结果消息')
+        logger.info(f'执行编号:[ {execution_no} ] 发送结果通知')
         for bot_no in notice_bots:
-            bot = notice_bot_dao.select_by_no(bot_no)
-            if bot.STATE == NoticeBotState.DISABLE.value:
-                logger.info(f'执行编号:[ {execution_no} ] 消息机器人:[ {bot.BOT_NAME} ] 消息机器人状态已禁用')
-                continue
-            # 企业微信
-            if bot.BOT_TYPE == NoticeBotType.WECOM.value:
-                logger.info(f'执行编号:[ {execution_no} ] 消息机器人:[ {bot.BOT_NAME} ] 发送企业微信消息')
-                WeComNotice.send_text(
-                    webhook=bot.BOT_WEBHOOK,
-                    content=get_notification_message(execution, report)
-                )
-
+            notice_signal.send(
+                bot_no=bot_no,
+                event=NoticeEvent.TESTPLAN_EXECUTION_COMPLETED.value,
+                markdown=get_notice_message(execution, report)
+            )
+    # 执行完毕
     logger.info(f'执行编号:[ {execution_no} ] 计划执行完成')
 
 
-def get_notification_message(execution, report):
+def get_notice_message(execution: TTestplanExecution, report: TTestReport):
     testplan = testplan_dao.select_by_no(execution.PLAN_NO)
     user = user_dao.select_by_no(execution.CREATED_BY)
     if report:
@@ -606,28 +598,28 @@ def get_notification_message(execution, report):
         failure_count = test_worker_result_dao.count_by_report_and_success(report.REPORT_NO, False)
         report_url = f'{CONFIG.BASE_URL}/script/report?reportNo={report.REPORT_NO}'
         return (
-            f'测试计划执行完成\n'
-            f'计划名称：{testplan.PLAN_NAME}\n'
-            f'执行环境：{execution.ENVIRONMENT}\n'
-            f'执行人：{user.USER_NAME}\n'
-            f'耗时：{elapsed_time}\n'
-            f'成功：{success_count}\n'
-            f'失败：{failure_count}\n'
-            f'测试报告：{report_url}'
+            f'# 测试计划执行完毕\n'
+            f'>**计划名称：**<font color="comment">{testplan.PLAN_NAME}</font>\n'
+            f'>**执行环境：**<font color="comment">{execution.ENVIRONMENT}</font>\n'
+            f'>**执行人：**<font color="comment">{user.USER_NAME}</font>\n'
+            f'>**耗时：**<font color="comment">{elapsed_time}</font>\n'
+            f'>**成功：**<font color="info">{success_count}</font>\n'
+            f'>**失败：**<font color="warning">{failure_count}</font>\n\n'
+            f'[点击这里查看测试报告]({report_url})'
         )
     else:
         elapsed_time = microsecond_to_h_m_s(execution.ELAPSED_TIME)
         success_count = testplan_execution_collection_dao.sum_success_count_by_execution(execution.EXECUTION_NO)
         failure_count = testplan_execution_collection_dao.sum_failure_count_by_execution(execution.EXECUTION_NO)
         return (
-            f'# 测试计划执行完成\n'
-            f'#### 计划计划：`{testplan.PLAN_NAME}`\n'
-            f'#### 执行环境：`{execution.ENVIRONMENT}`\n'
-            f'#### 执行人：`{user.USER_NAME}`\n'
-            f'><font color="comment">**总耗时**：{elapsed_time}</font>\n'
-            f'><font color="comment">**共迭代**：{execution.ITER_COUNT} 次</font>\n'
-            f'><font color="info">**成功迭代**：{success_count} 次</font>\n'
-            f'><font color="warning">**失败迭代**：{failure_count} 次</font>'
+            f'# 测试计划执行完毕\n'
+            f'>**计划名称：**<font color="comment">{testplan.PLAN_NAME}</font>\n'
+            f'>**执行环境：**<font color="comment">{execution.ENVIRONMENT}</font>\n'
+            f'>**执行人：**<font color="comment">{user.USER_NAME}</font>\n'
+            f'>**总共耗时：**<font color="comment">{elapsed_time}</font>\n'
+            f'>**迭代次数：**<font color="comment">{execution.ITER_COUNT} 次</font>\n'
+            f'>**成功迭代：**<font color="info">{success_count} 次</font>\n'
+            f'>**失败迭代：**<font color="warning">{failure_count} 次</font>'
         )
 
 
