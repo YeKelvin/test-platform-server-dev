@@ -13,7 +13,7 @@ from app.tools.require import require_permission
 @blueprint.get('/openapi/log/list')
 @require_login
 @require_permission
-def query_openapi_log_list(CODE='QUERY_OPENAPI_LOG'):
+def query_openapi_log_list(CODE='QUERY_LOG'):
     """分页查询OpenAPI日志列表"""
     req = JsonParser(
         Argument('method'),
