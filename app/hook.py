@@ -18,11 +18,13 @@ def inject_traceid():
 
 def inject_ip():
     """注入请求ip"""
-    if x_forwarded_for := request.headers.get('X-Forwarded-For'):
-        ip_list = x_forwarded_for.split(',')
-        g.ip = ip_list[0]
+    if 'X-Forwarded-For' in request.headers:
+        setattr(g, 'ip', request.headers.get('X-Forwarded-For'))
+    elif 'X-Real-IP' in request.headers:
+        setattr(g, 'ip', request.headers.get('X-Real-IP'))
     else:
-        g.ip = request.remote_addr
+        setattr(g, 'ip', request.remote_addr)
+
 
 
 def cross_domain_access(response):
