@@ -19,7 +19,8 @@ def inject_traceid():
 def inject_ip():
     """注入请求ip"""
     if 'X-Forwarded-For' in request.headers:
-        setattr(g, 'ip', request.headers.get('X-Forwarded-For'))
+        real_ip_list = request.headers.get('X-Forwarded-For').split(',')
+        setattr(g, 'ip', real_ip_list[0])
     elif 'X-Real-IP' in request.headers:
         setattr(g, 'ip', request.headers.get('X-Real-IP'))
     else:
