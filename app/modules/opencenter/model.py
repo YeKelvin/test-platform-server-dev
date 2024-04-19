@@ -23,11 +23,11 @@ class TOpenAccessToken(TableModel, BaseColumn):
     """访问令牌表"""
     __tablename__ = 'OPEN_ACCESS_TOKEN'
     TOKEN_NO = db.Column(db.String(32), index=True, nullable=False, comment='令牌编号')
-    TOKEN_NAME = db.Column(db.String(32), index=True, nullable=False, comment='令牌名称')
-    TOKEN_DESC = db.Column(db.String(32), index=True, nullable=False, comment='令牌描述')
-    TOKEN_OWNER = db.Column(db.String(32), index=True, nullable=False, comment='令牌持有人')
-    WORKSPACES = db.Column(JSONB, index=True, nullable=False, comment='空间列表')
-    PERMISSIONS = db.Column(JSONB, index=True, nullable=False, comment='权限列表')
+    TOKEN_NAME = db.Column(db.String(32), nullable=False, comment='令牌名称')
+    TOKEN_DESC = db.Column(db.String(32), comment='令牌描述')
+    TOKEN_OWNER = db.Column(db.String(32), comment='令牌持有人')
+    WORKSPACES = db.Column(JSONB, comment='空间列表')
+    PERMISSIONS = db.Column(JSONB, comment='权限列表')
     EXPIRE_TIME = db.Column(db.DateTime(), comment='失效时间')
     LAST_USED_TIME = db.Column(db.DateTime(), comment='最后使用时间')
 
