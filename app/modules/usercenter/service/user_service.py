@@ -160,6 +160,7 @@ def login_by_enterprise(req):
     # 查询用户信息
     user = user_dao.select_by_email(sso_email)
     user_no = user.USER_NO if user else new_id()
+    localvars.set('user_no', user_no)
 
     # 用户不存在时新增
     sso_res_data = sso_res['data']
