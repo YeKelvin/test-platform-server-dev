@@ -26,12 +26,13 @@ class TWorkspace(TableModel, BaseColumn):
     WORKSPACE_NAME = db.Column(db.String(128), nullable=False, comment='空间名称')
     WORKSPACE_DESC = db.Column(db.String(256), comment='空间描述')
     WORKSPACE_SCOPE = db.Column(db.String(128), nullable=False, comment='空间作用域')
+    STATE = db.Column(db.String(16), nullable=False, default='ENABLE', comment='空间状态(ENABLE:启用, DISABLE:禁用)')
     UniqueConstraint('WORKSPACE_NAME', 'WORKSPACE_SCOPE', 'DELETED', name='unique_name_scope')
 
 
-class TWorkspaceUser(TableModel, BaseColumn):
+class TWorkspaceMember(TableModel, BaseColumn):
     """空间用户表"""
-    __tablename__ = 'WORKSPACE_USER'
+    __tablename__ = 'WORKSPACE_MEMBER'
     WORKSPACE_NO = db.Column(db.String(32), index=True, nullable=False, comment='空间编号')
     USER_NO = db.Column(db.String(32), index=True, nullable=False, comment='用户编号')
     UniqueConstraint('WORKSPACE_NO', 'USER_NO', 'DELETED', name='unique_workspace_user')

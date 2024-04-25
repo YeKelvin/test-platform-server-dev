@@ -10,7 +10,7 @@ from app.extension import db  # noqa
 from app.modules.script.model import TTestElement  # noqa
 from app.modules.script.model import TVariableDataset  # noqa
 from app.modules.system.model import TWorkspace  # noqa
-from app.modules.system.model import TWorkspaceUser  # noqa
+from app.modules.system.model import TWorkspaceMember  # noqa
 from app.modules.usercenter.model import TModule  # noqa
 from app.modules.usercenter.model import TObject  # noqa
 from app.modules.usercenter.model import TPermission  # noqa
@@ -89,10 +89,10 @@ def init_user():
     workspace_no = new_id()
     TWorkspace.norecord_insert(
         WORKSPACE_NO=workspace_no,
-        WORKSPACE_NAME='个人空间',
-        WORKSPACE_SCOPE='PRIVATE'
+        WORKSPACE_NAME='默认空间',
+        WORKSPACE_SCOPE='DEFAULT'
     )
-    TWorkspaceUser.norecord_insert(WORKSPACE_NO=workspace_no, USER_NO=user_no)
+    TWorkspaceMember.norecord_insert(WORKSPACE_NO=workspace_no, USER_NO=user_no)
     # 创建空间变量
     TVariableDataset.insert(
         WORKSPACE_NO=workspace_no,

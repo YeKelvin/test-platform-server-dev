@@ -9,8 +9,8 @@ from flask import request
 
 from app.modules.opencenter.model import TOpenAccessToken
 from app.modules.system.model import TWorkspaceExemption
+from app.modules.system.model import TWorkspaceMember
 from app.modules.system.model import TWorkspaceRestriction
-from app.modules.system.model import TWorkspaceUser
 from app.modules.usercenter.model import TGroupMember
 from app.modules.usercenter.model import TPermission
 from app.modules.usercenter.model import TRole
@@ -49,7 +49,7 @@ def get_workspace_no_by_request():
 
 
 def get_user_workspaces(user_no) -> list:
-    return [entity.WORKSPACE_NO for entity in TWorkspaceUser.filter_by(USER_NO=user_no).all()]
+    return [entity.WORKSPACE_NO for entity in TWorkspaceMember.filter_by(USER_NO=user_no).all()]
 
 
 def get_user_groups(user_no) -> list:

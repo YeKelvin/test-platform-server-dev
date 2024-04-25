@@ -4,9 +4,9 @@
 # @Author  : Kelvin.Ye
 from app.database import db_query
 from app.modules.system.dao import workspace_dao
-from app.modules.system.dao import workspace_user_dao
+from app.modules.system.dao import workspace_member_dao
 from app.modules.system.model import TWorkspace
-from app.modules.system.model import TWorkspaceUser
+from app.modules.system.model import TWorkspaceMember
 from app.modules.usercenter.model import TRole
 from app.modules.usercenter.model import TUser
 from app.modules.usercenter.model import TUserRole
@@ -19,12 +19,12 @@ from app.utils.sqlalchemy_util import QueryCondition
 @http_service
 def query_workspace_member_list(req):
     # 查询条件
-    conds = QueryCondition(TUser, TWorkspace, TWorkspaceUser)
-    conds.equal(TUser.USER_NO, TWorkspaceUser.USER_NO)
-    conds.equal(TWorkspace.WORKSPACE_NO, TWorkspaceUser.WORKSPACE_NO)
-    conds.like(TWorkspaceUser.WORKSPACE_NO, req.workspaceNo)
+    conds = QueryCondition(TUser, TWorkspace, TWorkspaceMember)
+    conds.equal(TUser.USER_NO, TWorkspaceMember.USER_NO)
+    conds.equal(TWorkspace.WORKSPACE_NO, TWorkspaceMember.WORKSPACE_NO)
+    conds.like(TWorkspaceMember.WORKSPACE_NO, req.workspaceNo)
 
-    # TUser, TWorkspace, TWorkspaceUser 连表查询
+    # TUser, TWorkspace, TWorkspaceMember 连表查询
     pagination = (
         db_query(
             TWorkspace.WORKSPACE_NO,
@@ -33,7 +33,7 @@ def query_workspace_member_list(req):
             TUser.USER_NAME
         )
         .filter(*conds)
-        .order_by(TWorkspaceUser.CREATED_TIME.desc())
+        .order_by(TWorkspaceMember.CREATED_TIME.desc())
         .paginate(page=req.page, per_page=req.pageSize, error_out=False)
     )
 
@@ -53,9 +53,9 @@ def query_workspace_member_list(req):
 @http_service
 def query_workspace_member_all(req):
     # 查询条件
-    conds = QueryCondition(TUser, TWorkspaceUser)
-    conds.equal(TUser.USER_NO, TWorkspaceUser.USER_NO)
-    conds.equal(TWorkspaceUser.WORKSPACE_NO, req.workspaceNo)
+    conds = QueryCondition(TUser, TWorkspaceMember)
+    conds.equal(TUser.USER_NO, TWorkspaceMember.USER_NO)
+    conds.equal(TWorkspaceMember.WORKSPACE_NO, req.workspaceNo)
 
     # 查询全部空间成员
     workspace_user_list = db_query(
@@ -85,15 +85,15 @@ def modify_workspace_member(req):
     # 更新空间成员
     for user_no in members:
         # 查询空间成员
-        workspace_user = workspace_user_dao.select_by_workspace_and_user(req.workspaceNo, user_no)
+        workspace_user = workspace_member_dao.select_by_workspace_and_user(req.workspaceNo, user_no)
         if workspace_user:
             continue
         else:
             # 新增空间成员
-            TWorkspaceUser.insert(WORKSPACE_NO=req.workspaceNo, USER_NO=user_no)
+            TWorkspaceMember.insert(WORKSPACE_NO=req.workspaceNo, USER_NO=user_no)
 
     # 删除不在请求中的空间成员
-    workspace_user_dao.delete_all_by_workspace_and_notin_user(req.workspaceNo, members)
+    workspace_member_dao.delete_all_by_workspace_and_notin_user(req.workspaceNo, members)
 
 
 def get_super_admin_userno():

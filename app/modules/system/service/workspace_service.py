@@ -9,12 +9,12 @@ from app.modules.script.enum import VariableDatasetWeight
 from app.modules.script.model import TTestElement
 from app.modules.script.model import TVariableDataset
 from app.modules.system.dao import workspace_dao
-from app.modules.system.dao import workspace_user_dao
+from app.modules.system.dao import workspace_member_dao
 from app.modules.system.enum import WorkspaceScope
 from app.modules.system.model import TWorkspace
 from app.modules.system.model import TWorkspaceExemption
+from app.modules.system.model import TWorkspaceMember
 from app.modules.system.model import TWorkspaceRestriction
-from app.modules.system.model import TWorkspaceUser
 from app.modules.usercenter.model import TRole
 from app.modules.usercenter.model import TUser
 from app.modules.usercenter.model import TUserRole
@@ -33,6 +33,7 @@ def query_workspace_list(req):
     conds.like(TWorkspace.WORKSPACE_NAME, req.workspaceName)
     conds.like(TWorkspace.WORKSPACE_SCOPE, req.workspaceScope)
     conds.like(TWorkspace.WORKSPACE_DESC, req.workspaceDesc)
+    conds.equal(TWorkspace.STATE, req.state)
 
     pagination = (
         TWorkspace
@@ -44,12 +45,13 @@ def query_workspace_list(req):
 
     data = [
         {
-            'workspaceNo': workspace.WORKSPACE_NO,
-            'workspaceName': workspace.WORKSPACE_NAME,
-            'workspaceScope': workspace.WORKSPACE_SCOPE,
-            'workspaceDesc': workspace.WORKSPACE_DESC
+            'state': entity.STATE,
+            'workspaceNo': entity.WORKSPACE_NO,
+            'workspaceName': entity.WORKSPACE_NAME,
+            'workspaceScope': entity.WORKSPACE_SCOPE,
+            'workspaceDesc': entity.WORKSPACE_DESC
         }
-        for workspace in pagination.items
+        for entity in pagination.items
     ]
 
     return {'list': data, 'total': pagination.total}
@@ -59,9 +61,8 @@ def query_workspace_list(req):
 def query_workspace_all(req):
     if not req.userNo:
         conds = QueryCondition()
+        conds.equal(TWorkspace.STATE, req.state)
         conds.include(TWorkspace.WORKSPACE_SCOPE, req.scopes)
-        print(f'{req.scopes=}')
-        print(f'{conds=}')
         workspaces = (
             TWorkspace
             .filter(*conds)
@@ -70,33 +71,35 @@ def query_workspace_all(req):
         )  # type: list[TWorkspace]
     else:
         # 查询条件
-        conds = QueryCondition(TWorkspace, TWorkspaceUser)
+        conds = QueryCondition(TWorkspace, TWorkspaceMember)
         conds.include(TWorkspace.WORKSPACE_SCOPE, req.scopes)
-        conds.equal(TWorkspaceUser.WORKSPACE_NO, TWorkspace.WORKSPACE_NO)
-        conds.equal(TWorkspaceUser.USER_NO, req.userNo)
-        # 查询团队和个人空间
+        conds.equal(TWorkspace.STATE, req.state)
+        conds.equal(TWorkspaceMember.WORKSPACE_NO, TWorkspace.WORKSPACE_NO)
+        conds.equal(TWorkspaceMember.USER_NO, req.userNo)
+        # 查询默认、个人和团队空间
         workspace_stmt = (
             TWorkspace
             .filter(*conds)
             .order_by(TWorkspace.WORKSPACE_SCOPE.asc(), TWorkspace.CREATED_TIME.desc())
         )
         # 查询公共空间
-        public_workspace_stmt = (
+        public_stmt = (
             TWorkspace
             .filter(TWorkspace.WORKSPACE_SCOPE == 'PUBLIC')
             .order_by(TWorkspace.CREATED_TIME.desc())
         )
         # 连表查询
-        workspaces = workspace_stmt.union(public_workspace_stmt).all()  # type: list[TWorkspace]
+        workspaces = workspace_stmt.union(public_stmt).all()  # type: list[TWorkspace]
 
     return [
         {
-            'workspaceNo': workspace.WORKSPACE_NO,
-            'workspaceName': workspace.WORKSPACE_NAME,
-            'workspaceScope': workspace.WORKSPACE_SCOPE,
-            'workspaceDesc': workspace.WORKSPACE_DESC
+            'state': entity.STATE,
+            'workspaceNo': entity.WORKSPACE_NO,
+            'workspaceName': entity.WORKSPACE_NAME,
+            'workspaceScope': entity.WORKSPACE_SCOPE,
+            'workspaceDesc': entity.WORKSPACE_DESC
         }
-        for workspace in workspaces
+        for entity in workspaces
     ]
 
 
@@ -106,6 +109,7 @@ def query_workspace_info(req):
     workspace = workspace_dao.select_by_no(req.workspaceNo)
     check_exists(workspace, error='工作空间不存在')
     return {
+        'state': workspace.STATE,
         'workspaceNo': workspace.WORKSPACE_NO,
         'workspaceName': workspace.WORKSPACE_NAME,
         'workspaceScope': workspace.WORKSPACE_SCOPE,
@@ -146,8 +150,8 @@ def create_workspace(req):
     )
 
     # 管理员自动加入团队空间
-    if req.workspaceScope == WorkspaceScope.PROTECTED.value:
-        TWorkspaceUser.insert(
+    if req.workspaceScope == WorkspaceScope.TEAM.value:
+        TWorkspaceMember.insert(
             WORKSPACE_NO=workspace_no,
             USER_NO=get_super_admin_userno()
         )
@@ -167,18 +171,29 @@ def modify_workspace(req):
 
 
 @http_service
+def modify_workspace_state(req):
+    # 查询工作空间
+    workspace = workspace_dao.select_by_no(req.workspaceNo)
+    check_exists(workspace, error='工作空间不存在')
+
+    # 更新空间状态
+    workspace.update(STATE=req.state)
+
+
+@http_service
 def remove_workspace(req):
     # 查询工作空间
     workspace = workspace_dao.select_by_no(req.workspaceNo)
     check_exists(workspace, error='工作空间不存在')
 
-    # 私人空间随用户，删除用户时才会删除私人空间
-    if req.workspaceScope == WorkspaceScope.PRIVATE.value:
-        raise ServiceError(msg='私人空间不允许删除')
+    # 默认空间跟随用户，删除用户时才会删除默认空间
+    if req.workspaceScope == WorkspaceScope.DEFAULT.value:
+        raise ServiceError(msg='默认空间不允许删除')
+
     # 团队空间有成员时不允许删除
     if (
-            req.workspaceScope == WorkspaceScope.PROTECTED.value
-            and workspace_user_dao.count_by_workspace(req.workspaceNo) != 0
+            req.workspaceScope == WorkspaceScope.TEAM.value
+            and workspace_member_dao.count_by_workspace(req.workspaceNo) != 0
     ):
         raise ServiceError(msg='存在成员的团队空间不允许删除')
 

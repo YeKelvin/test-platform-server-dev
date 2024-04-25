@@ -20,6 +20,7 @@ def query_workspace_list(CODE='QUERY_WORKSPACE'):
         Argument('workspaceName'),
         Argument('workspaceDesc'),
         Argument('workspaceScope'),
+        Argument('state'),
         Argument('page', type=int, required=True, nullable=False, help='页数不能为空'),
         Argument('pageSize', type=int, required=True, nullable=False, help='每页总数不能为空'),
     ).parse()
@@ -33,6 +34,7 @@ def query_workspace_all(CODE='QUERY_WORKSPACE'):
     """查询全部工作空间"""
     req = JsonParser(
         Argument('userNo'),
+        Argument('state'),
         Argument('scopes', type=list)
     ).parse()
     return service.query_workspace_all(req)
@@ -44,7 +46,7 @@ def query_workspace_all(CODE='QUERY_WORKSPACE'):
 def query_workspace_info(CODE='QUERY_WORKSPACE'):
     """查询工作空间信息"""
     req = JsonParser(
-        Argument('workspaceNo', required=True, nullable=False, help='工作空间编号不能为空')
+        Argument('workspaceNo', required=True, nullable=False, help='空间编号不能为空')
     ).parse()
     return service.query_workspace_info(req)
 
@@ -55,9 +57,9 @@ def query_workspace_info(CODE='QUERY_WORKSPACE'):
 def create_workspace(CODE='CREATE_WORKSPACE'):
     """新增工作空间"""
     req = JsonParser(
-        Argument('workspaceName', required=True, nullable=False, help='工作空间名称不能为空'),
+        Argument('workspaceName', required=True, nullable=False, help='空间名称不能为空'),
         Argument('workspaceDesc'),
-        Argument('workspaceScope', required=True, nullable=False, help='工作空间作用域不能为空')
+        Argument('workspaceScope', required=True, nullable=False, help='空间作用域不能为空')
     ).parse()
     return service.create_workspace(req)
 
@@ -68,12 +70,24 @@ def create_workspace(CODE='CREATE_WORKSPACE'):
 def modify_workspace(CODE='MODIFY_WORKSPACE'):
     """修改工作空间"""
     req = JsonParser(
-        Argument('workspaceNo', required=True, nullable=False, help='工作空间编号不能为空'),
-        Argument('workspaceName', required=True, nullable=False, help='工作空间名称不能为空'),
+        Argument('workspaceNo', required=True, nullable=False, help='空间编号不能为空'),
+        Argument('workspaceName', required=True, nullable=False, help='空间名称不能为空'),
         Argument('workspaceDesc'),
-        Argument('workspaceScope', required=True, nullable=False, help='工作空间作用域不能为空')
+        Argument('workspaceScope', required=True, nullable=False, help='空间作用域不能为空')
     ).parse()
     return service.modify_workspace(req)
+
+
+@blueprint.put('/workspace/state')
+@require_login
+@require_permission
+def modify_workspace_state(CODE='MODIFY_WORKSPACE'):
+    """修改工作空间状态"""
+    req = JsonParser(
+        Argument('workspaceNo', required=True, nullable=False, help='空间编号不能为空'),
+        Argument('state', required=True, nullable=False, help='空间状态不能为空')
+    ).parse()
+    return service.modify_workspace_state(req)
 
 
 @blueprint.delete('/workspace')
@@ -82,6 +96,6 @@ def modify_workspace(CODE='MODIFY_WORKSPACE'):
 def remove_workspace(CODE='REMOVE_WORKSPACE'):
     """删除工作空间"""
     req = JsonParser(
-        Argument('workspaceNo', required=True, nullable=False, help='工作空间编号不能为空'),
+        Argument('workspaceNo', required=True, nullable=False, help='空间编号不能为空'),
     ).parse()
     return service.remove_workspace(req)

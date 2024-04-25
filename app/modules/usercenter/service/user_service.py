@@ -17,7 +17,7 @@ from app.modules.script.enum import VariableDatasetWeight
 from app.modules.script.model import TTestElement
 from app.modules.script.model import TVariableDataset
 from app.modules.system.model import TWorkspace
-from app.modules.system.model import TWorkspaceUser
+from app.modules.system.model import TWorkspaceMember
 from app.modules.usercenter.dao import group_dao
 from app.modules.usercenter.dao import group_member_dao
 from app.modules.usercenter.dao import role_dao
@@ -182,14 +182,14 @@ def login_by_enterprise(req):
             USER_NO=user_no,
             ROLE_NO=role.ROLE_NO
         )
-        # 创建个人空间
+        # 创建默认空间
         workspace_no = new_id()
         TWorkspace.insert(
             WORKSPACE_NO=workspace_no,
-            WORKSPACE_NAME='个人空间',
-            WORKSPACE_SCOPE='PRIVATE'
+            WORKSPACE_NAME='默认空间',
+            WORKSPACE_SCOPE='DEFAULT'
         )
-        TWorkspaceUser.insert(WORKSPACE_NO=workspace_no, USER_NO=user_no)
+        TWorkspaceMember.insert(WORKSPACE_NO=workspace_no, USER_NO=user_no)
         # 创建空间变量
         TVariableDataset.insert(
             WORKSPACE_NO=workspace_no,
@@ -301,14 +301,14 @@ def create_user(req):
         CREATE_TYPE='CUSTOMER'
     )
 
-    # 创建个人空间
+    # 创建默认空间
     workspace_no = new_id()
     TWorkspace.insert(
         WORKSPACE_NO=workspace_no,
-        WORKSPACE_NAME='个人空间',
-        WORKSPACE_SCOPE='PRIVATE'
+        WORKSPACE_NAME='默认空间',
+        WORKSPACE_SCOPE='DEFAULT'
     )
-    TWorkspaceUser.insert(WORKSPACE_NO=workspace_no, USER_NO=user_no)
+    TWorkspaceMember.insert(WORKSPACE_NO=workspace_no, USER_NO=user_no)
 
     # 创建空间变量
     TVariableDataset.insert(
@@ -676,14 +676,14 @@ def update_user_groups(user_no, groups):
     group_member_dao.delete_all_by_user_and_notin_group(user_no, groups)
 
 
-def get_private_workspace_by_user(user_no):
+def get_default_workspace_by_user(user_no):
     # 查询条件
-    conds = QueryCondition(TWorkspace, TWorkspaceUser)
-    conds.equal(TWorkspace.WORKSPACE_NO, TWorkspaceUser.WORKSPACE_NO)
-    conds.equal(TWorkspace.WORKSPACE_SCOPE, 'PRIVATE')
-    conds.equal(TWorkspaceUser.USER_NO, user_no)
+    conds = QueryCondition(TWorkspace, TWorkspaceMember)
+    conds.equal(TWorkspace.WORKSPACE_NO, TWorkspaceMember.WORKSPACE_NO)
+    conds.equal(TWorkspace.WORKSPACE_SCOPE, 'DEFAULT')
+    conds.equal(TWorkspaceMember.USER_NO, user_no)
 
-    # 查询私人空间
+    # 查询默认空间
     return db_query(TWorkspace).filter(*conds).first()
 
 
@@ -716,11 +716,11 @@ def remove_user(req):
     user_login_info_dao.delete_all_by_user(req.userNo)
 
     # 删除私人空间
-    workspace = get_private_workspace_by_user(req.userNo)
+    workspace = get_default_workspace_by_user(req.userNo)
     workspace.delete()
 
     # 删除空间成员
-    TWorkspaceUser.deletes_by(USER_NO=req.userNo)
+    TWorkspaceMember.deletes_by(USER_NO=req.userNo)
 
     # 删除用户
     user.delete()
