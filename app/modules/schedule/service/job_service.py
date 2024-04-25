@@ -23,7 +23,6 @@ from app.modules.script.dao import element_children_dao
 from app.modules.script.dao import test_element_dao
 from app.modules.script.dao import testplan_dao
 from app.modules.usercenter.model import TUser
-from app.tools.exceptions import ServiceError
 from app.tools.identity import new_id
 from app.tools.localvars import get_trace_id
 from app.tools.localvars import get_user_no
@@ -31,6 +30,7 @@ from app.tools.service import http_service
 from app.tools.validator import check_absent
 from app.tools.validator import check_exists
 from app.tools.validator import check_workspace_permission
+from app.utils.json_util import to_json
 from app.utils.sqlalchemy_util import QueryCondition
 from app.utils.time_util import TIMEFMT
 from app.utils.time_util import datetime_now_by_utc8
@@ -180,7 +180,7 @@ def create_job(req):
             name=req.jobName,
             func=jobfx.get(req.jobType),
             kwargs=req.jobArgs,
-            trigger=cron_trigger # args={'crontab': 'xxx', 'start_date': 'xxx', 'end_date': 'xxx'}
+            trigger=cron_trigger
         )
 
     return {'jobNo': job_no}
@@ -195,64 +195,64 @@ def modify_job(req):
     job = schedule_job_dao.select_by_no(req.jobNo)
     check_exists(job, error='任务不存在')
 
-    if job.JOB_STATE != JobState.PENDING.value:
-        raise ServiceError('任务已开始，不允许修改')
-
     # 唯一性校验
     if req.jobType == JobType.TESTPLAN.value:
         existing_job = TScheduleJob.filter(
             TScheduleJob.ID != job.ID,
-            TScheduleJob.WORKSPACE_NO == req.workspaceNo,
+            TScheduleJob.WORKSPACE_NO == job.WORKSPACE_NO,
             TScheduleJob.JOB_ARGS['plan_no'].as_string() == req.jobArgs['plan_no'],
             TScheduleJob.JOB_STATE != JobState.CLOSED.value
         ).first()
     elif req.jobType == JobType.COLLECTION.value:
         existing_job = TScheduleJob.filter(
             TScheduleJob.ID != job.ID,
-            TScheduleJob.WORKSPACE_NO == req.workspaceNo,
+            TScheduleJob.WORKSPACE_NO == job.WORKSPACE_NO,
             TScheduleJob.JOB_ARGS['collection_no'].as_string() == req.jobArgs['collection_no'],
             TScheduleJob.JOB_STATE != JobState.CLOSED.value
         ).first()
     else:
         existing_job = TScheduleJob.filter(
             TScheduleJob.ID != job.ID,
-            TScheduleJob.WORKSPACE_NO == req.workspaceNo,
+            TScheduleJob.WORKSPACE_NO == job.WORKSPACE_NO,
             TScheduleJob.JOB_ARGS['worker_no'].as_string() == req.jobArgs['worker_no'],
             TScheduleJob.JOB_STATE != JobState.CLOSED.value
         ).first()
     check_absent(existing_job, error='相同内容的任务已存在')
 
+    # 暂存触发器参数，用于后面做对比
+    old_trigger_args = job.TRIGGER_ARGS
+
     # 更新作业信息
     job.update(
         JOB_NAME=req.jobName,
         JOB_DESC=req.jobDesc,
+        JOB_TYPE=req.jobType,
         JOB_ARGS=req.jobArgs,
         TRIGGER_TYPE=req.triggerType,
         TRIGGER_ARGS=req.triggerArgs
     )
 
     # 更新作业
+    apscheduler.modify_job(
+        id=job.JOB_NO,
+        name=req.jobName,
+        kwargs=req.jobArgs
+    )
+
+    # 作业未开始才允许修改时间
+    if job.JOB_STATE != JobState.PENDING.value:
+        return
+
+    # 更新作业触发器
     if req.triggerType == TriggerType.DATE.value:
-        apscheduler.modify_job(
-            id=job.JOB_NO,
-            name=req.jobName,
-            kwargs=req.jobArgs,
+        to_json(old_trigger_args) != to_json(req.triggerArgs) and apscheduler.scheduler.reschedule_job(
+            job_id=job.JOB_NO,
             trigger=DateTrigger(**req.triggerArgs)
         )
     else:
-        cron_trigger = CronTrigger.from_crontab(req.triggerArgs['crontab'])
-        start_date = req.triggerArgs.get('start_date')
-        end_date = req.triggerArgs.get('end_date')
-        tz = get_localzone()
-        if start_date:
-            cron_trigger.start_date = convert_to_datetime(start_date, tz, 'start_date')
-        if end_date:
-            cron_trigger.end_date = convert_to_datetime(end_date, tz, 'end_date')
-        apscheduler.modify_job(
-            id=job.JOB_NO,
-            name=req.jobName,
-            kwargs=req.jobArgs,
-            trigger=cron_trigger
+        to_json(old_trigger_args) != to_json(req.triggerArgs) and apscheduler.scheduler.reschedule_job(
+            job_id=job.JOB_NO,
+            trigger=create_cron_trigger(**req.triggerArgs)
         )
 
 
@@ -363,3 +363,17 @@ def query_job_log_list(req):
     ]
 
     return {'list': data, 'total': pagination.total}
+
+
+def create_cron_trigger(**args):
+    """生成crontab触发器"""
+    cron_trigger = CronTrigger.from_crontab(args['crontab'])
+    start_date = args.get('start_date')
+    end_date = args.get('end_date')
+    tz = get_localzone()
+    if start_date:
+        cron_trigger.start_date = convert_to_datetime(start_date, tz, 'start_date')
+    if end_date:
+        cron_trigger.end_date = convert_to_datetime(end_date, tz, 'end_date')
+
+    return cron_trigger

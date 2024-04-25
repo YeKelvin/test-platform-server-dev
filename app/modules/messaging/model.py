@@ -28,7 +28,7 @@ class TNoticeLog(TableModel, BaseColumn):
     """通知日志表"""
     __tablename__ = 'NOTICE_LOG'
     WORKSPACE_NO = db.Column(db.String(32), index=True, nullable=False, comment='空间编号')
-    LOG_NO = db.Column(db.String(32), index=True, unique=True, nullable=False, comment='日志编号')
+    LOG_NO = db.Column(db.String(32), index=True, nullable=False, comment='日志编号')
     EVENT = db.Column(db.String(64), nullable=False, comment='触发事件')
     CHANNEL = db.Column(db.String(16), nullable=False, comment='通知渠道')
     CONTENT = db.Column(db.Text(), nullable=False, comment='通知内容')

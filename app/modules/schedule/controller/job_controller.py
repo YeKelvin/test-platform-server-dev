@@ -68,6 +68,7 @@ def modify_job(CODE='MODIFY_JOB'):
         Argument('jobNo', required=True, nullable=False, help='作业编号不能为空'),
         Argument('jobName', required=True, nullable=False, help='作业名称不能为空'),
         Argument('jobDesc'),
+        Argument('jobType', required=True, nullable=False, enum=JobType, help='作业类型不能为空'),
         Argument('jobArgs', required=True, nullable=False, type=dict, help='作业参数不能为空'),
         Argument('triggerType', required=True, nullable=False, enum=TriggerType, help='触发器类型不能为空'),
         Argument('triggerArgs', required=True, nullable=False, type=dict, help='触发器参数不能为空')
