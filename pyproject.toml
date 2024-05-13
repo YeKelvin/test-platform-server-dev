@@ -40,7 +40,7 @@ flask-apscheduler = "1.13.1"
 # job
 apscheduler = "3.10.4"
 # signal
-blinker = "1.7.0"
+blinker = "1.8.2"
 # encryption
 pyjwt = "2.8.0"
 # environment

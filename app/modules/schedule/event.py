@@ -24,7 +24,7 @@ def handle_scheduler_started(event: SchedulerEvent):
 
     The scheduler was started
     """
-    logger.info('event:[ EVENT_SCHEDULER_STARTED ] the scheduler was started')
+    logger.info('作业事件:[ EVENT_SCHEDULER_STARTED ] 作业程序已启动')
 
 
 def handle_scheduler_shutdown(event: SchedulerEvent):
@@ -32,7 +32,7 @@ def handle_scheduler_shutdown(event: SchedulerEvent):
 
     The scheduler was shutdown
     """
-    logger.info('event:[ EVENT_SCHEDULER_SHUTDOWN ] the scheduler was shutdown')
+    logger.info('作业事件:[ EVENT_SCHEDULER_SHUTDOWN ] 作业程序已关闭')
 
 
 def handle_scheduler_paused(event: SchedulerEvent):
@@ -40,7 +40,7 @@ def handle_scheduler_paused(event: SchedulerEvent):
 
     Job processing in the scheduler was paused
     """
-    logger.info('event:[ EVENT_SCHEDULER_PAUSED ] job processing in the scheduler was paused')
+    logger.info('作业事件:[ EVENT_SCHEDULER_PAUSED ] 定时作业已暂停')
 
 
 def handle_scheduler_resumed(event: SchedulerEvent):
@@ -48,7 +48,7 @@ def handle_scheduler_resumed(event: SchedulerEvent):
 
     Job processing in the scheduler was resumed
     """
-    logger.info('event:[ EVENT_SCHEDULER_RESUMED ] job processing in the scheduler was resumed')
+    logger.info('作业事件:[ EVENT_SCHEDULER_RESUMED ] 定时作业已恢复')
 
 
 def handle_executor_added(event: SchedulerEvent):
@@ -88,9 +88,7 @@ def handle_all_jobs_removed(event: SchedulerEvent):
 
     All jobs were removed from either all job stores or one particular job store
     """
-    logger.info(
-        'event:[ EVENT_ALL_JOBS_REMOVED ] all jobs were removed from either all job stores or one particular job store'
-    )
+    logger.info('作业事件:[ EVENT_ALL_JOBS_REMOVED ] 已从所有作业存储或一个特定作业存储中删除所有作业')
 
 
 def handle_job_added(event: JobEvent):
@@ -98,7 +96,7 @@ def handle_job_added(event: JobEvent):
 
     A job was added to a job store
     """
-    logger.info(f'event:[ EVENT_JOB_ADDED ] jobId:[ {event.job_id} ] 作业已添加')
+    logger.info(f'作业事件:[ EVENT_JOB_ADDED ] 作业编号:[ {event.job_id} ] 定时作业已添加')
 
 
 @apscheduler_app_context
@@ -107,7 +105,7 @@ def handle_job_removed(event: JobEvent):
 
     A job was removed from a job store
     """
-    logger.info(f'event:[ EVENT_JOB_REMOVED ] jobId:[ {event.job_id} ] 作业已移除')
+    logger.info(f'作业事件:[ EVENT_JOB_REMOVED ] 作业编号:[ {event.job_id} ] 定时作业已移除')
     # 更新任务状态
     try:
         # 查询任务
@@ -116,7 +114,7 @@ def handle_job_removed(event: JobEvent):
             return
         # 如果任务状态仍未关闭，则更新状态为已关闭
         if job.JOB_STATE != JobState.CLOSED.value:
-            logger.info(f'jobId:[ {event.job_id} ] 更新任务状态为CLOSED')
+            logger.info(f'作业编号:[ {event.job_id} ] 更新作业任务状态为已关闭')
             job.update(STATE=JobState.CLOSED.value)
         # 新增历史记录
         TScheduleLog.insert(
@@ -139,7 +137,7 @@ def handle_job_modified(event: JobEvent):
 
     A job was modified from outside the scheduler
     """
-    logger.info(f'event:[ EVENT_JOB_MODIFIED ] jobId:[ {event.job_id} ] 作业已修改')
+    logger.info(f'作业事件:[ EVENT_JOB_MODIFIED ] 作业编号:[ {event.job_id} ] 定时作业已修改')
 
 
 @apscheduler_app_context
@@ -148,7 +146,7 @@ def handle_job_submitted(event: JobSubmissionEvent):
 
     A job was submitted to its executor to be run
     """
-    logger.info(f'event:[ EVENT_JOB_SUBMITTED ] jobId:[ {event.job_id} ] 开始执行作业')
+    logger.info(f'作业事件:[ EVENT_JOB_SUBMITTED ] 作业编号:[ {event.job_id} ] 开始执行作业')
     try:
         # 查询任务
         job = schedule_job_dao.select_by_no(event.job_id)
@@ -178,15 +176,43 @@ def handle_job_max_instances(event: JobSubmissionEvent):
     A job being submitted to its executor was not accepted by the executor,
     because the job has already reached its maximum concurrently executing instances
     """
-    logger.warning(f'event:[ EVENT_JOB_MAX_INSTANCES ] jobId:[ {event.job_id} ] 已达到最大并发执行实例数，作业提交失败')
+    logger.warning(
+        f'作业事件:[ EVENT_JOB_MAX_INSTANCES ] 作业编号:[ {event.job_id} ] 已达到最大并发执行实例数，作业提交失败'
+    )
 
 
+# @apscheduler_app_context
 def handle_job_executed(event: JobExecutionEvent):
     """EVENT_JOB_EXECUTED
 
     A job was executed successfully
     """
-    logger.info(f'event:[ EVENT_JOB_EXECUTED ] jobId:[ {event.job_id} ] 作业执行完成')
+    logger.info(f'作业事件:[ EVENT_JOB_EXECUTED ] 作业编号:[ {event.job_id} ] 作业执行完成')
+    # try:
+    #     apjob = apscheduler.get_job(job.JOB_NO)
+    #     if not apjob or apjob.next_run_time:
+    #         return
+    #     # 查询任务
+    #     job = schedule_job_dao.select_by_no(event.job_id)
+    #     if not job or job.JOB_STATE == JobState.CLOSED.value:
+    #         return
+    #     logger.info(f'作业事件:[ EVENT_JOB_EXECUTED ] 作业编号:[ {event.job_id} ] 作业周期结束，自动关闭作业')
+    #     # 更新状态
+    #     job.update(JOB_STATE=JobState.CLOSED.value)
+    #     # 新增历史记录
+    #     TScheduleLog.insert(
+    #         LOG_NO=traceid_var.get() or new_ulid(),
+    #         JOB_NO=job.JOB_NO,
+    #         JOB_EVENT=JobEvents.CLOSE.value,
+    #         OPERATION_BY='9999',
+    #         OPERATION_TIME=datetime_now_by_utc8()
+    #     )
+    #     # 需要手动提交
+    #     db.session.commit()
+    # except Exception:
+    #     # 数据回滚
+    #     db.session.rollback()
+    #     logger.exception('Exception Occurred')
 
 
 def handle_job_error(event: JobExecutionEvent):
@@ -194,7 +220,7 @@ def handle_job_error(event: JobExecutionEvent):
 
     A job raised an exception during execution
     """
-    logger.exception(f'event:[ EVENT_JOB_ERROR ] jobId:[ {event.job_id} ] 作业执行异常')
+    logger.exception(f'作业事件:[ EVENT_JOB_ERROR ] 作业编号:[ {event.job_id} ] 作业执行异常')
 
 
 def handle_job_missed(event: JobExecutionEvent):
