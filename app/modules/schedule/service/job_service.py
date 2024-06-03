@@ -70,10 +70,19 @@ def query_job_list(req):
             'jobState': job.JOB_STATE,
             'triggerType': job.TRIGGER_TYPE,
             'createdTime': job.CREATED_TIME.strftime(TIMEFMT),
-            'nextRunTime': apjob.next_run_time.strftime(TIMEFMT) if apjob else None,
+            'nextRunTime': get_next_run_time(apjob)
         })
 
     return {'list': data, 'total': pagination.total}
+
+
+def get_next_run_time(apjob, format=TIMEFMT):
+    if not apjob:
+        return None
+    next_run_time = apjob.next_run_time
+    if not next_run_time:
+        return None
+    return next_run_time.strftime(format)
 
 
 def get_job_args(job_type, job_args):
