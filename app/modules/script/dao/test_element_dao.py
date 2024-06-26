@@ -46,4 +46,6 @@ def get_skiped_and_enabled(element_no) -> tuple[bool, bool]:
             TTestElement.ELEMENT_NO == element_no
         )
     ).first()
+    if not entity:
+        return False, True
     return entity.SKIPED, entity.ENABLED

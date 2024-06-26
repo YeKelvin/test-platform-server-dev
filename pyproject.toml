@@ -65,8 +65,6 @@ pytest = "*"
 pytest-html = "*"
 pytest-asyncio = "*"
 ruff = "*"
-yapf = "*"
-black = "*"
 pre-commit = "*"
 
 [tool.ruff]
@@ -93,29 +91,19 @@ ignore = [
 ]
 exclude = [
     "__pycache__",
-    ".cache"
+    ".cache",
+    ".vscode",
+    "sql",
+    "ruff_cache"
 ]
 
 [tool.ruff.pydocstyle]
 convention = "google"
 
 [tool.ruff.isort]
-known-local-folder = ["app"]
 force-single-line = true
 lines-after-imports = 2
 lines-between-types = 1
-
-[tool.yapf]
-indent_width = 4
-column_limit = 120
-split_before_dot = true
-coalesce_brackets = true
-join_multiple_lines = true
-spaces_before_comment = 2
-dedent_closing_brackets = true
-arithmetic_precedence_indication = true
-blank_line_before_nested_class_or_def = true
-blank_lines_between_top_level_imports_and_variables = 2
 
 [tool.pytest.ini_options]
 addopts = [

@@ -6,8 +6,8 @@ from app.modules.script.dao import element_children_dao
 from app.modules.script.dao import test_element_dao
 from app.modules.script.enum import ElementType
 from app.modules.script.enum import is_test_snippet
-from app.modules.script.manager import element_loader
 from app.modules.script.manager.element_component import add_variable_dataset
+from app.modules.script.manager.element_loader import ElementLoader
 from app.tools.exceptions import ServiceError
 from app.tools.service import http_service
 
@@ -21,7 +21,7 @@ def query_collection_json(req):
     if collection.ELEMENT_TYPE != ElementType.COLLECTION.value:
         raise ServiceError(msg='仅支持测试集合')
     # 根据 collectionNo 递归加载脚本
-    script = element_loader.loads_tree(req.collectionNo)
+    script = ElementLoader(req.collectionNo).loads_tree()
     # 添加变量组件
     add_variable_dataset(script, datasets=req.datasets, use_current=req.useCurrentValue)
     return script
@@ -41,7 +41,7 @@ def query_worker_json(req):
         raise ServiceError(msg='元素节点不存在')
     collection_no = worker_node.PARENT_NO
     # 根据 collectionNo 递归加载脚本
-    script = element_loader.loads_tree(collection_no, required_worker=req.workerNo)
+    script = ElementLoader(collection_no, worker_no=req.workerNo).loads_tree()
     # 添加变量组件
     add_variable_dataset(script, datasets=req.datasets, use_current=req.useCurrentValue)
     return script
@@ -56,11 +56,7 @@ def query_snippet_json(req):
     if not is_test_snippet(collection):
         raise ServiceError(msg='仅支持测试片段')
     # 根据 collectionNo 递归加载脚本
-    script = element_loader.loads_test_snippet(
-        collection.ELEMENT_NO,
-        collection.ELEMENT_NAME,
-        collection.ELEMENT_DESC
-    )
+    script = ElementLoader(collection.ELEMENT_NO).loads_tree()
     # 添加变量组件
     add_variable_dataset(script, datasets=req.datasets, additional=req.variables, use_current=req.useCurrentValue)
     return script

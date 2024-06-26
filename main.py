@@ -5,13 +5,12 @@
 import logging
 import sys
 
-from loguru import logger
-
 from app import config as CONFIG
 from app import create_app
 from app.utils.log_util import InterceptHandler
 from app.utils.log_util import console_formatter
 from app.utils.log_util import file_formatter
+from loguru import logger
 
 
 # logging 输出至 loguru
@@ -51,7 +50,14 @@ app = create_app()
 
 
 if __name__ == '__main__':
+    import gevent
+    gevent.config.loop = 'libuv'
+
+    from gevent import monkey
+    monkey.patch_all()
+
     from gevent.pywsgi import WSGIServer
+
     server = WSGIServer(('', 5000), app)
     try:
         server.serve_forever()

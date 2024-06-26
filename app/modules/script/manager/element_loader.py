@@ -436,7 +436,7 @@ class ElementLoader:
     def get_offline_element(self, element_no) -> TTestElement | dict | list:
         """从离线数据中读取元素信息，包含TTestElement对象，元素属性和元素组件"""
         if offline := self.offlines.get(element_no):
-            # 组装元素信息
+            # 组装元素信息, TODO: 这里可以优化
             el_skiped, el_enabled = test_element_dao.get_skiped_and_enabled(element_no)
             element = TTestElement(
                 ELEMENT_NO=element_no,

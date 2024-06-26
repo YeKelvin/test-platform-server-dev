@@ -144,6 +144,14 @@ def get_worker_no(element_no):
     return get_worker_no(node.PARENT_NO) # 找不到时继续递归往上找
 
 
+def is_component(node):
+    return node.ELEMENT_TYPE in [
+        ElementType.PREV_PROCESSOR.value,
+        ElementType.POST_PROCESSOR.value,
+        ElementType.ASSERTION.value
+    ]
+
+
 def get_case_no(element_no):
     """获取用例编号"""
     case_no = localvar__case_no.get()
@@ -151,14 +159,16 @@ def get_case_no(element_no):
         node = get_element_node(element_no)
         if not node: # 没有节点的没有case（根元素：集合/片段）
             case_no = None
-        elif node.ROOT_TYPE == ElementType.SNIPPET.value: # 片段子代没有case
+        elif node.ELEMENT_TYPE == ElementType.WORKER.value: # Worker就是case
+            case_no = element_no
+        elif node.ELEMENT_TYPE == ElementType.WORKSPACE.value: # 空间元素没有case
             case_no = None
         elif node.PARENT_TYPE == ElementType.WORKSPACE.value: # 空间组件没有case
             case_no = None
-        elif node.ELEMENT_TYPE == ElementType.WORKSPACE.value: # 空间元素没有case
+        elif node.PARENT_TYPE == ElementType.COLLECTION.value and is_component(node): # 集合组件没有case
             case_no = None
-        elif node.ELEMENT_TYPE == ElementType.WORKER.value: # Worker就是case
-            case_no = element_no
+        elif node.ROOT_TYPE == ElementType.SNIPPET.value: # 片段子代没有case
+            case_no = None
         else:
             case_no = get_worker_no(node.PARENT_NO) # Worker子代就递归往上找case
         localvar__case_no.set(case_no)
