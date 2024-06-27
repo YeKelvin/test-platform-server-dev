@@ -789,12 +789,15 @@ def move_element(req):
 
 def update_children_root(parent_no, root_no):
     """递归修改子代元素的根元素编号"""
-    # 查询子代节点
+    # 查询所有子代节点
     nodes = element_children_dao.select_all_by_parent(parent_no)
     if not nodes:
         return
-    # 遍历更新根元素编号
+    # 遍历更新
     for node in nodes:
+        # 修改元素组件节点的根元素编号
+        element_component_dao.update_all_root(node.ELEMENT_NO, root_no)
+        # 修改根元素编号
         node.update(ROOT_NO=root_no)
         # 递归修改
         update_children_root(node.ELEMENT_NO, root_no)
@@ -915,7 +918,7 @@ def paste_element_by_cut(source: TTestElement, target: TTestElement):
     source_node = element_children_dao.select_by_child(source_no)
     source_parent_no = source_node.PARENT_NO
     source_index = source_node.ELEMENT_SORT
-    # 上移 source 元素下方的元素
+    # 上移 source 下面的元素
     (
         TElementChildren
         .filter(

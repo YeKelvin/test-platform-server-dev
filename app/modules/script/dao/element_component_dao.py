@@ -26,3 +26,9 @@ def select_all_by_parent_and_notin_components(parent_no, components) -> list[TEl
         )
         .all()
     )
+
+
+def update_all_root(parent_no, root_no):
+    entities = TElementComponent.filter_by(PARENT_NO=parent_no).all()
+    for entity in entities:
+        entity.update(ROOT_NO=root_no)
