@@ -1,3 +1,4 @@
+GEVENT_LOOP=libuv
 FLASK_APP=main:app
 FLASK_DEBUG=true
 FLASK_RUN_HOST=0.0.0.0
