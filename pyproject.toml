@@ -43,7 +43,6 @@ managed = true
 dev-dependencies = [
     "pip",
     "ruff",
-    "setuptools",
     "pre-commit",
     "pytest",
     "pytest-html",
