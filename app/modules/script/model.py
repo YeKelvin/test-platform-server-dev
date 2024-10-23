@@ -64,6 +64,17 @@ class TElementProperty(TableModel, BaseColumn):
     UniqueConstraint('ELEMENT_NO', 'PROPERTY_NAME', 'DELETED', name='unique_element_property')
 
 
+# class TElementNode(TableModel, BaseColumn):
+#     """元素节点表"""
+#     __tablename__ = 'ELEMENT_NODE'
+#     ROOT_NO = db.Column(db.String(32), index=True, nullable=False, comment='根元素编号')
+#     CASE_NO = db.Column(db.String(32), index=True, nullable=False, comment='用例编号')
+#     PARENT_NO = db.Column(db.String(32), index=True, nullable=False, comment='父元素编号')
+#     ELEMENT_NO = db.Column(db.String(32), index=True, nullable=False, comment='元素编号')
+#     ELEMENT_SORT = db.Column(db.Integer(), nullable=False, comment='元素序号')
+#     ATTACHMENT = db.Column(db.Boolean(), nullable=False, default=False, comment='附属节点')
+
+
 class TElementChildren(TableModel, BaseColumn):
     """元素子代表"""
     __tablename__ = 'ELEMENT_CHILDREN'

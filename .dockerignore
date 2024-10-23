@@ -6,11 +6,9 @@
 .pytest_cache/
 __pycache__/
 assets/
-doc/
-migrations/
-sql/
+docs/
 tests/
-pytest.ini
+migrations/
 report.html
 
 *.lock

@@ -194,6 +194,10 @@ class TableModel(CRUDMixin, db.Model):
 
     __abstract__ = True
 
+    @property
+    def as_dict(self):
+        return {col.name: getattr(self, col.name) for col in self.__table__.columns}
+
     def __repr__(self):
         return str(self.__dict__)
 

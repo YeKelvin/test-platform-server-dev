@@ -1,74 +1,73 @@
-
-[build-system]
-requires = ["poetry_core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry]
+[project]
 name = "qa-cloud-backend"
+readme = "README.md"
 version = "0.1.0"
 description = ""
-readme = "README.md"
+requires-python = ">= 3.11"
 authors = [
-    "Kelvin.Ye <testmankelvin@163.com>"
+    { name = "Kelvin.Ye", email = "testmankelvin@163.com" }
 ]
-packages = [
-    { include = "app" }
-]
-classifiers = [
-    # https://pypi.org/classifiers/
-    "Programming Language :: Python"
+dependencies = [
+    # flask
+    "flask==3.0.3",
+    "flask-migrate==4.0.7",
+    "flask-socketio==5.4.1",
+    "flask-sqlalchemy==3.1.1",
+    "flask-apscheduler==1.13.1",
+    # auth
+    "pyjwt==2.9.0",
+    # signal
+    "blinker==1.8.2",
+    # job
+    "apscheduler==3.10.4",
+    # environment
+    "environs==11.0.0",
+    "python-dotenv==1.0.1",
+    # tool
+    "munch==4.0.0",
+    # 以下依赖的版本在 pymeter 中控制
+    "arrow",
+    "httpx",
+    "json5",
+    "loguru",
+    "gevent",
+    "orjson",
+    "ulid-py",
+    "pycryptodome",
+    # 测试引擎
+    "pymeter",
 ]
 
-[[tool.poetry.source]]
-name = "aliyun"
+[tool.rye]
+managed = true
+dev-dependencies = [
+    "pip",
+    "ruff",
+    "setuptools",
+    "pre-commit",
+    "pytest",
+    "pytest-html",
+    "pytest-asyncio",
+]
+
+[tool.uv.sources]
+pymeter = { path = "../pymeter" }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[[tool.rye.sources]]
+name = "default"
 url = "https://mirrors.aliyun.com/pypi/simple/"
-priority = "primary"
-
-[[tool.poetry.source]]
-name = "tsinghua"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
-priority = "supplemental"
-
-[tool.poetry.dependencies]
-python = "^3.11"
-# flask
-flask = "3.0.3"
-flask-sqlalchemy = "3.1.1"
-flask-socketio = "5.3.6"
-flask-migrate = "4.0.7"
-flask-apscheduler = "1.13.1"
-# job
-apscheduler = "3.10.4"
-# signal
-blinker = "1.8.2"
-# encryption
-pyjwt = "2.8.0"
-# environment
-environs = "11.0.0"
-python-dotenv = "1.0.1"
-# tool
-munch = "4.0.0"
-# 私仓依赖
-pymeter = { path = "../pymeter", develop = true }
-# 以下依赖的版本在pymeter项目中控制
-ulid-py = "*"
-arrow = "*"
-httpx = "*"
-json5 = "*"
-loguru = "*"
-gevent = "*"
-orjson = "*"
-pycryptodome = "*"
-
-[tool.poetry.group.dev.dependencies]
-pytest = "*"
-pytest-html = "*"
-pytest-asyncio = "*"
-ruff = "*"
-pre-commit = "*"
 
 [tool.ruff]
-target-version = "py311"
 line-length = 120
 src = ["app"]
 select = [
@@ -91,11 +90,10 @@ ignore = [
 ]
 exclude = [
     "__pycache__",
-    ".cache",
+    ".venv",
     ".vscode",
-    "sql",
-    "ruff_cache"
 ]
+extend-include = ["*.ipynb"]
 
 [tool.ruff.pydocstyle]
 convention = "google"
@@ -105,7 +103,13 @@ force-single-line = true
 lines-after-imports = 2
 lines-between-types = 1
 
+[tool.ruff.format]
+line-ending = "lf"
+quote-style = "single"
+skip-magic-trailing-comma = true
+
 [tool.pytest.ini_options]
+asyncio_mode = "auto"
 addopts = [
     "--color=auto",
     "--capture=tee-sys",
@@ -115,7 +119,7 @@ addopts = [
     "--self-contained-html"
 ]
 testpaths = ["tests"]
-filterwarnings = ["error", "ignore::DeprecationWarning"]
+filterwarnings = ["error"]
 required_plugins = ["pytest-html"]
 log_cli = true
 log_level = "INFO"

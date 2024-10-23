@@ -4,7 +4,7 @@
 
 ```bash
 cd qa-cloud-backend/
-poetry install
+rye sync
 pre-commit install
 ```
 
@@ -15,6 +15,7 @@ cd venv/lib/site-packages
 touch myproject.pth
 
 # 将项目绝对路径添加至pth文件中
+/path/to/qa-cloud-backend
 ```
 
 ## 初始化数据库
@@ -46,7 +47,7 @@ docker network create main
 docker build -t qa-cloud-backend .
 ```
 
-**需要翻墙的话额外添加`build-arg`参数**
+**需要翻墙的话额外添加 `build-arg`参数**
 
 ```bash
 --build-arg HTTP_PROXY=http://docker.for.mac.host.internal:1087 --build-arg HTTPS_PROXY=http://docker.for.mac.host.internal:1087
@@ -56,5 +57,5 @@ docker build -t qa-cloud-backend .
 ### Docker运行
 
 ```bash
-docker run -d --network main -p 5000:5000 --name svc-qa-cloud-service qa-cloud-backend
+docker run -d --network main -p 5000:5000 --name qa-cloud-service qa-cloud-backend
 ```

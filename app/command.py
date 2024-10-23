@@ -287,7 +287,7 @@ def init_global_variable_dataset():
         DATASET_TYPE='GLOBAL',
         DATASET_WEIGHT=1
     )
-    click.echo('初始化PyMeter全局变量成功')
+    click.echo('初始化全局变量成功')
 
 
 def create_role(name, code, rank):

@@ -1,8 +1,15 @@
+# os
 .DS_Store
-.idea/
-.cache/
+
+# env
+.venv/
+
+# cache
 .ruff_cache/
 __pycache__/
+
+# ide
+.idea/
 
 # pytest
 .pytest_cache/
@@ -14,7 +21,8 @@ migrations/
 # build
 *.egg-info/
 
+# local
 *.lock
-*.db
 *.log
 *.env
+*.db
