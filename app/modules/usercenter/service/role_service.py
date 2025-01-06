@@ -145,7 +145,7 @@ def remove_role(req):
 
     # 查询用户角色列表
     user_role_list = user_role_dao.select_all_by_roleno(req.roleNo)
-    check_absent(user_role_list, error='角色与用户存在关联，请先解除关联')
+    check_absent(user_role_list, error='角色与用户存在关联，请先解除关联') # TODO: 自动清空
 
     # 删除角色权限
     role_permission_dao.delete_by_role(req.roleNo)

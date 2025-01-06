@@ -4,7 +4,7 @@ flask-socketio==5.4.1
 flask-migrate==4.0.7
 flask-apscheduler==1.13.1
 apscheduler==3.10.4
-blinker==1.8.2
+blinker==1.9.0
 pyjwt[crypto]==2.9.0
 environs==11.0.0
 python-dotenv==1.0.1

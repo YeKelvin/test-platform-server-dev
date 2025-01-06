@@ -4,9 +4,7 @@ readme = "README.md"
 version = "0.1.0"
 description = ""
 requires-python = ">= 3.11"
-authors = [
-    { name = "Kelvin.Ye", email = "testmankelvin@163.com" }
-]
+authors = [{ name = "Kelvin.Ye", email = "testmankelvin@163.com" }]
 dependencies = [
     # flask
     "flask==3.0.3",
@@ -17,7 +15,7 @@ dependencies = [
     # auth
     "pyjwt==2.9.0",
     # signal
-    "blinker==1.8.2",
+    "blinker==1.9.0",
     # job
     "apscheduler==3.10.4",
     # environment
@@ -38,8 +36,7 @@ dependencies = [
     "pymeter",
 ]
 
-[tool.rye]
-managed = true
+[tool.uv]
 dev-dependencies = [
     "pip",
     "ruff",
@@ -52,19 +49,14 @@ dev-dependencies = [
 [tool.uv.sources]
 pymeter = { path = "../pymeter" }
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
 [tool.hatch.metadata]
 allow-direct-references = true
 
+[tool.hatch.build.targets.sdist]
+exclude = []
+
 [tool.hatch.build.targets.wheel]
 packages = ["app"]
-
-[[tool.rye.sources]]
-name = "default"
-url = "https://mirrors.aliyun.com/pypi/simple/"
 
 [tool.ruff]
 line-length = 120
@@ -123,3 +115,11 @@ required_plugins = ["pytest-html"]
 log_cli = true
 log_level = "INFO"
 log_format = "[%(asctime)s][%(levelname)s][%(name)s.%(funcName)s:%(lineno)d] %(message)s"
+
+[[tool.uv.index]]
+name = "aliyun"
+url = "https://mirrors.aliyun.com/pypi/simple/"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

@@ -71,8 +71,8 @@ class TElementProperty(TableModel, BaseColumn):
 #     CASE_NO = db.Column(db.String(32), index=True, nullable=False, comment='用例编号')
 #     PARENT_NO = db.Column(db.String(32), index=True, nullable=False, comment='父元素编号')
 #     ELEMENT_NO = db.Column(db.String(32), index=True, nullable=False, comment='元素编号')
-#     ELEMENT_SORT = db.Column(db.Integer(), nullable=False, comment='元素序号')
-#     ATTACHMENT = db.Column(db.Boolean(), nullable=False, default=False, comment='附属节点')
+#     POSITION = db.Column(db.Integer(), nullable=False, comment='元素位置')
+#     ATTACHMENT = db.Column(db.Boolean(), nullable=False, comment='附属节点')
 
 
 class TElementChildren(TableModel, BaseColumn):
